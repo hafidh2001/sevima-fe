@@ -106,7 +106,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
         id: payload.sub,
         email: payload.email,
         name: payload.email.split("@")[0],
-        role: payload.role as RoleEnum,
+        role: payload.roleName as RoleEnum,
         tenantId: payload.tenantId,
       };
 
