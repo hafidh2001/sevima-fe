@@ -11,7 +11,7 @@ export const registerSchema = z
       .string()
       .min(6, "Password minimal 6 karakter"),
     confirmPassword: z.string().min(1, "Konfirmasi password harus diisi"),
-    tenantSlug: z.string().min(1, "Tenant slug harus diisi"),
+    tenantId: z.number().min(1, "Tenant harus dipilih"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Password tidak cocok",
