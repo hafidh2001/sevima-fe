@@ -9,7 +9,8 @@ import { InputField } from "@/components/fields/inputField";
 import { PasswordField } from "@/components/fields/passwordField";
 import { loginSchema, LoginFormData } from "@/validations/auth/login";
 import { showToast } from "@/utils/toast";
-import { LockIcon, UserIcon } from "lucide-react";
+import { Spinner } from "@/components/Spinner";
+import { LockIcon, MailIcon } from "lucide-react";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export const LoginPage = () => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
       rememberMe: false,
     },
@@ -44,89 +45,118 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <div className="w-full max-w-md">
-        {/* Header */}
+        {/* Logo & Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">
-            Masuk
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg mb-4">
+            <svg
+              className="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
+            </svg>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+            FlowForge
           </h1>
           <p className="text-gray-500 text-sm sm:text-base">
-            Silakan masukkan kredensial Anda untuk mengakses akun
+            Multi-Tenant Workflow Orchestration Engine
           </p>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
+        {/* Login Card */}
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+          <h2 className="text-xl font-semibold text-gray-800 mb-6">
+            Masuk ke Akun Anda
+          </h2>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* Username Field */}
-          <Controller
-            name="username"
-            control={control}
-            render={({ field }) => (
-              <InputField
-                {...field}
-                label="Username"
-                placeholder="Masukkan username"
-                startIcon={<UserIcon className="h-5 w-5 text-gray-400" />}
-                errorMessage={errors.username?.message}
-              />
-            )}
-          />
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
 
-          {/* Password Field */}
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <PasswordField
-                {...field}
-                label="Password"
-                placeholder="Masukkan password"
-                startIcon={<LockIcon className="h-5 w-5 text-gray-400" />}
-                errorMessage={errors.password?.message}
-              />
-            )}
-          />
-
-          {/* Remember Me */}
-          <div className="flex items-center">
+          {/* Login Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Email Field */}
             <Controller
-              name="rememberMe"
+              name="email"
               control={control}
               render={({ field }) => (
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="rememberMe"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <label
-                    htmlFor="rememberMe"
-                    className="text-sm text-gray-600 font-normal cursor-pointer"
-                  >
-                    Ingat saya
-                  </label>
-                </div>
+                <InputField
+                  {...field}
+                  label="Email"
+                  type="email"
+                  placeholder="Masukkan email"
+                  startIcon={<MailIcon className="h-5 w-5 text-gray-400" />}
+                  errorMessage={errors.email?.message}
+                  autoComplete="email"
+                />
               )}
             />
-          </div>
 
-          {/* Login Button */}
-          <Button type="submit" disabled={isLoading} className="w-full py-3">
-            {isLoading ? "Memuat..." : "Masuk"}
-          </Button>
-        </form>
+            {/* Password Field */}
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <PasswordField
+                  {...field}
+                  label="Password"
+                  placeholder="Masukkan password"
+                  startIcon={<LockIcon className="h-5 w-5 text-gray-400" />}
+                  errorMessage={errors.password?.message}
+                  autoComplete="current-password"
+                />
+              )}
+            />
 
-        {/* Footer Text */}
-        <p className="text-center text-xs sm:text-sm text-gray-400 mt-8">
-          &copy; {new Date().getFullYear()} Boilerplate. Hak cipta dilindungi.
+            {/* Remember Me */}
+            <div className="flex items-center justify-between">
+              <Controller
+                name="rememberMe"
+                control={control}
+                render={({ field }) => (
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id="rememberMe"
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <label
+                      htmlFor="rememberMe"
+                      className="text-sm text-gray-600 font-normal cursor-pointer"
+                    >
+                      Ingat saya
+                    </label>
+                  </div>
+                )}
+              />
+            </div>
+
+            {/* Login Button */}
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              {isLoading ? <Spinner text="Memuat..." /> : "Masuk"}
+            </Button>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <p className="text-center text-xs sm:text-sm text-gray-400 mt-6">
+          &copy; {new Date().getFullYear()} FlowForge. Hak cipta dilindungi.
         </p>
       </div>
     </div>

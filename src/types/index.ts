@@ -9,7 +9,7 @@ export interface BasicSelectOpt<T = string> {
   value: T;
 }
 
-// API Response
+// API Standard Response type
 export interface ApiResponse<T> {
   status: boolean;
   data: T;
@@ -25,8 +25,9 @@ export interface ApiPaginationResponse<T> extends ApiResponse<T> {
   };
 }
 
-// Enums
+// Global enums used across modules
 export enum RoleEnum {
-  ADMIN = "admin",
-  USER = "user",
+  ADMIN = "ADMIN",
+  EDITOR = "EDITOR",
+  VIEWER = "VIEWER",
 }

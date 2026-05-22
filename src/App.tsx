@@ -51,10 +51,15 @@ function App() {
         <Route
           path={ROUTES.base}
           element={
-            <ProtectedRoute allowedRoles={[RoleEnum.ADMIN, RoleEnum.USER]}>
+            <ProtectedRoute
+              allowedRoles={[RoleEnum.ADMIN, RoleEnum.EDITOR, RoleEnum.VIEWER]}
+            >
               <AdminLayout>
                 <div className="flex flex-col min-h-screen w-full px-5 justify-center items-center">
-                  <h3 className="font-semibold text-xl">Halo Haped</h3>
+                  <h3 className="font-semibold text-xl">Welcome to FlowForge</h3>
+                  <p className="text-gray-500 mt-2">
+                    Multi-Tenant Workflow Orchestration Engine
+                  </p>
                 </div>
               </AdminLayout>
             </ProtectedRoute>

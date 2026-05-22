@@ -1,11 +1,12 @@
 import { create } from "zustand";
+import { authApi } from "@/services/authApi";
 import { jwtService } from "@/functions/jwt";
 import type { AuthState, AuthStore } from "@/types/auth/store";
-import { TAuthUser } from "@/types/auth";
-import mockUsers from "@/data/mock-user.json";
+import type { TAuthUser } from "@/types/auth";
+import { RoleEnum } from "@/types";
 
 const initialState: AuthState = {
-  user: {} as TAuthUser,
+  user: null,
   isAuthenticated: false,
   isLoading: false,
   isInitialized: false,
@@ -20,10 +21,10 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ isLoading: true });
 
     try {
+      const userData = jwtService.getUserData();
       const payload = await jwtService.getCurrentUser();
 
-      if (payload) {
-        const userData = jwtService.getUserData();
+      if (payload && userData) {
         set({
           user: userData,
           isAuthenticated: true,
@@ -48,33 +49,25 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ isLoading: true, error: null, success: null });
 
     try {
-      // Find user by username and password
-      const foundUser = (mockUsers as TAuthUser[]).find(
-        (u) =>
-          u.username === credentials.username &&
-          u.password === credentials.password
-      );
+      const tokens = await authApi.login(credentials);
 
-      if (!foundUser) {
-        set({
-          isLoading: false,
-          error: "Username atau password salah",
-        });
-        return false;
+      const { accessToken, refreshToken } = tokens;
+
+      // Decode JWT to get user data
+      const payload = await jwtService.verifyToken(accessToken);
+
+      if (!payload) {
+        throw new Error("Invalid token received");
       }
 
-      const userData = foundUser;
-
-      // Generate JWT tokens from user data
-      const jwtPayload = {
-        id_user: String(userData.id),
-        username: userData.username,
-        name: userData.name,
-        role: userData.role,
+      const userData: TAuthUser = {
+        id: payload.sub,
+        email: payload.email,
+        name: payload.email.split("@")[0],
+        role: payload.role as RoleEnum,
+        tenantId: payload.tenantId,
       };
 
-      const { accessToken, refreshToken } =
-        await jwtService.generateTokens(jwtPayload);
       jwtService.setTokens(
         accessToken,
         refreshToken,
@@ -86,7 +79,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
         user: userData,
         isAuthenticated: true,
         isLoading: false,
-        error: null,
         success: "Login berhasil",
       });
 
@@ -102,7 +94,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
   logout: async () => {
     jwtService.clearTokens();
     set({
-      user: {} as TAuthUser,
+      user: null,
       isAuthenticated: false,
       error: null,
       success: null,

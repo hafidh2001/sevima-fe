@@ -1,15 +1,20 @@
-import { RoleEnum } from "@/types";
+import type { RoleEnum } from "@/types";
 
 export type TAuthUser = {
   id: number;
+  email: string;
   name: string;
-  username: string;
-  password: string;
   role: RoleEnum;
+  tenantId: number;
 };
 
 export interface ILoginRequest {
-  username: string;
+  email: string;
   password: string;
   rememberMe?: boolean;
+}
+
+export interface TokenResponse {
+  accessToken: string;
+  refreshToken: string;
 }

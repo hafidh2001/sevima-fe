@@ -1,19 +1,19 @@
 import * as jose from "jose";
-import { RoleEnum } from "@/types";
 import type { TAuthUser } from "@/types/auth";
 
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
 const USER_DATA_KEY = "user_data";
-const JWT_SECRET = import.meta.env.VITE_JWT_SECRET || "logbook-secret-key-change-in-production";
-const ACCESS_TOKEN_EXPIRY = "15m";
-const REFRESH_TOKEN_EXPIRY = "7d";
+const JWT_SECRET = import.meta.env.VITE_JWT_SECRET || "flowforge-secret-key-change-in-production";
 
 export type JWTPayload = {
-  id_user: string;
-  username: string;
-  name: string;
-  role: RoleEnum;
+  sub: number;
+  email: string;
+  role: string;
+  tenantId: number;
+  type: "access" | "refresh";
+  iat?: number;
+  exp?: number;
 };
 
 const secret = new TextEncoder().encode(JWT_SECRET);
@@ -34,37 +34,18 @@ const deleteCookie = (name: string) => {
 
 export const jwtService = {
   /**
-   * Generate access and refresh tokens
+   * Set tokens and user data from backend login response
    */
-  generateTokens: async (payload: JWTPayload): Promise<{
-    accessToken: string;
-    refreshToken: string;
-  }> => {
-    const accessToken = await new jose.SignJWT({ ...payload })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime(ACCESS_TOKEN_EXPIRY)
-      .sign(secret);
-
-    const refreshToken = await new jose.SignJWT({ ...payload })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime(REFRESH_TOKEN_EXPIRY)
-      .sign(secret);
-
-    return { accessToken, refreshToken };
-  },
-
-  /**
-   * Set tokens and user data in cookies
-   * @param rememberMe - if true, keep user logged in for 7 days, otherwise 1 day
-   */
-  setTokens: (accessToken: string, refreshToken: string, userData: TAuthUser, rememberMe: boolean = false): void => {
-    setCookie(ACCESS_TOKEN_KEY, accessToken, 0.0104); // ~15 minutes
-    const refreshExpiry = rememberMe ? 7 : 1; // 7 days if remember me, 1 day otherwise
-    setCookie(REFRESH_TOKEN_KEY, refreshToken, refreshExpiry);
-    // Store user data as JSON cookie
-    setCookie(USER_DATA_KEY, encodeURIComponent(JSON.stringify(userData)), refreshExpiry);
+  setTokens: (
+    accessToken: string,
+    refreshToken: string,
+    userData: TAuthUser,
+    rememberMe: boolean = false,
+  ): void => {
+    const expiry = rememberMe ? 7 : 1;
+    setCookie(ACCESS_TOKEN_KEY, accessToken, 0.0104);
+    setCookie(REFRESH_TOKEN_KEY, refreshToken, expiry);
+    setCookie(USER_DATA_KEY, encodeURIComponent(JSON.stringify(userData)), expiry);
   },
 
   /**
@@ -80,13 +61,13 @@ export const jwtService = {
   /**
    * Get user data from cookies
    */
-  getUserData: (): TAuthUser => {
+  getUserData: (): TAuthUser | null => {
     const userDataCookie = getCookie(USER_DATA_KEY);
-    if (!userDataCookie) return {} as TAuthUser;
+    if (!userDataCookie) return null;
     try {
       return JSON.parse(decodeURIComponent(userDataCookie)) as TAuthUser;
     } catch {
-      return {} as TAuthUser;
+      return null;
     }
   },
 
@@ -103,15 +84,11 @@ export const jwtService = {
   },
 
   /**
-   * Get current user from cookies
+   * Get current user from stored token
    */
   getCurrentUser: async (): Promise<JWTPayload | null> => {
     const { accessToken } = jwtService.getTokens();
-
-    if (!accessToken) {
-      return null;
-    }
-
+    if (!accessToken) return null;
     return jwtService.verifyToken(accessToken);
   },
 
@@ -122,33 +99,5 @@ export const jwtService = {
     deleteCookie(ACCESS_TOKEN_KEY);
     deleteCookie(REFRESH_TOKEN_KEY);
     deleteCookie(USER_DATA_KEY);
-  },
-
-  /**
-   * Refresh access token using refresh token
-   */
-  refreshAccessToken: async (): Promise<boolean> => {
-    const { refreshToken } = jwtService.getTokens();
-
-    if (!refreshToken) {
-      return false;
-    }
-
-    const payload = await jwtService.verifyToken(refreshToken);
-
-    if (!payload) {
-      return false;
-    }
-
-    // Get existing user data
-    const userData = jwtService.getUserData();
-
-    // Generate new tokens
-    const { accessToken, refreshToken: newRefreshToken } =
-      await jwtService.generateTokens(payload);
-
-    jwtService.setTokens(accessToken, newRefreshToken, userData!);
-
-    return true;
   },
 };
