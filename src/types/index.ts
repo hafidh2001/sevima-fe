@@ -31,3 +31,9 @@ export enum RoleEnum {
   EDITOR = "EDITOR",
   VIEWER = "VIEWER",
 }
+
+export enum WorkflowStatusEnum {
+  ACTIVE = "ACTIVE",
+  DRAFT = "DRAFT",
+  ARCHIVED = "ARCHIVED",
+}

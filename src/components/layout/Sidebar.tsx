@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/utils/routes";
 import { useAuthStore } from "@/store/authStore";
 import { ConfirmationModal } from "@/components/confirmationModal";
-import { LogOutIcon, MenuIcon } from "lucide-react";
+import { LogOutIcon, MenuIcon, WorkflowIcon } from "lucide-react";
+
+const menuItems = [
+  { label: "Workflows", route: ROUTES.workflowList, icon: WorkflowIcon },
+];
 
 export const Sidebar = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout } = useAuthStore();
 
   const handleLogout = async () => {
@@ -15,6 +20,8 @@ export const Sidebar = () => {
     setShowLogoutModal(false);
     navigate(ROUTES.login);
   };
+
+  const isActive = (route: string) => location.pathname === route;
 
   return (
     <>
@@ -25,7 +32,25 @@ export const Sidebar = () => {
           <div className="w-32 h-8 bg-gray-200 rounded flex justify-center items-center">LOGO</div>
         </div>
 
-        <nav className="flex-1">sidebar</nav>
+        <nav className="flex-1 px-4 py-4 space-y-1">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.route}
+                onClick={() => navigate(item.route)}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive(item.route)
+                    ? "bg-blue-50 text-blue-600"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
 
         <div className="px-4">
           <div className="border-t border-gray-200" />
