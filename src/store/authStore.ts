@@ -14,7 +14,7 @@ const initialState: AuthState = {
   success: null,
 };
 
-export const useAuthStore = create<AuthStore>((set) => ({
+export const useAuthStore = create<AuthStore>((set, get) => ({
   ...initialState,
 
   init: async () => {
@@ -25,12 +25,24 @@ export const useAuthStore = create<AuthStore>((set) => ({
       const payload = await jwtService.getCurrentUser();
 
       if (payload && userData) {
-        set({
-          user: userData,
-          isAuthenticated: true,
-          isLoading: false,
-          isInitialized: true,
-        });
+        // Check if token is still valid, if not try refresh
+        const isValid = await get().ensureValidToken();
+
+        if (isValid) {
+          set({
+            user: userData,
+            isAuthenticated: true,
+            isLoading: false,
+            isInitialized: true,
+          });
+        } else {
+          // Token refresh failed, clear auth
+          jwtService.clearTokens();
+          set({
+            isLoading: false,
+            isInitialized: true,
+          });
+        }
       } else {
         set({
           isLoading: false,
@@ -42,6 +54,36 @@ export const useAuthStore = create<AuthStore>((set) => ({
         isLoading: false,
         isInitialized: true,
       });
+    }
+  },
+
+  /**
+   * Ensure access token is valid, refresh if expired
+   */
+  ensureValidToken: async () => {
+    try {
+      const tokens = jwtService.getTokens();
+
+      if (!tokens.refreshToken) {
+        return false;
+      }
+
+      // Verify access token
+      const payload = await jwtService.verifyToken(tokens.accessToken || "");
+
+      if (payload) {
+        // Token still valid
+        return true;
+      }
+
+      // Token expired or invalid, try refresh
+      const newTokens = await authApi.refresh(tokens.refreshToken);
+      jwtService.updateAccessToken(newTokens.accessToken);
+
+      return true;
+    } catch {
+      // Refresh failed
+      return false;
     }
   },
 

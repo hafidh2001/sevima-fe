@@ -49,6 +49,13 @@ export const jwtService = {
   },
 
   /**
+   * Update only access token (keep refresh token and user data)
+   */
+  updateAccessToken: (accessToken: string): void => {
+    setCookie(ACCESS_TOKEN_KEY, accessToken, 0.0104);
+  },
+
+  /**
    * Get tokens from cookies
    */
   getTokens: (): { accessToken?: string; refreshToken?: string } => {

@@ -45,4 +45,27 @@ export const authApi = {
       throw error;
     }
   },
+
+  /**
+   * Refresh access token using refresh token
+   */
+  async refresh(refreshToken: string): Promise<TokenResponse> {
+    try {
+      const { data } = await apiClient.post<TokenResponse>(
+        "auth/refresh",
+        { refreshToken },
+      );
+
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        if (responseData?.message) {
+          throw new Error(responseData.message);
+        }
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  },
 };
