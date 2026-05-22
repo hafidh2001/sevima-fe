@@ -9,7 +9,8 @@ const JWT_SECRET = import.meta.env.VITE_JWT_SECRET || "flowforge-secret-key-chan
 export type JWTPayload = {
   sub: number;
   email: string;
-  role: string;
+  roleId: number;
+  roleName: string;
   tenantId: number;
   type: "access" | "refresh";
   iat?: number;
