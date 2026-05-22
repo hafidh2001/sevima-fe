@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SingleSelect } from "@/components/fields/singleSelect";
 import { InputField } from "@/components/fields/inputField";
+import { CalendarSelect } from "@/components/fields/calendarSelect";
 import { useWorkflowStore } from "@/store/workflowStore";
 import { useMasterStore } from "@/store/masterStore";
 import { useUrlParams } from "@/hooks/useUrlParams";
@@ -14,6 +15,10 @@ import { DEFAULT_PAGE_SIZE } from "@/constants/table";
 import type { WorkflowStatusOption } from "@/types/master/store";
 import { BasicSelectOpt } from "@/types";
 import { WorkflowResponse } from "@/types/workflow";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 export const WorkflowListPage = () => {
   const { workflowData, isLoading, loadWorkflowList } = useWorkflowStore();
@@ -41,11 +46,13 @@ export const WorkflowListPage = () => {
   } = useUrlParams({
     defaultPage: 1,
     defaultLimit: DEFAULT_PAGE_SIZE,
-    filterKeys: ["status"],
+    filterKeys: ["status", "from", "to"],
     searchDebounceMs: 500,
   });
 
   const statusFilter = (filters.status as WorkflowStatusOption) || "all";
+  const fromDate = filters.from ? new Date(filters.from as string) : undefined;
+  const toDate = filters.to ? new Date(filters.to as string) : undefined;
 
   const fetchWorkflows = useCallback(async () => {
     try {
@@ -59,8 +66,15 @@ export const WorkflowListPage = () => {
       }
 
       if (statusFilter !== "all") {
-        // Backend accepts uppercase values: ACTIVE, DRAFT, ARCHIVED
         params.status = statusFilter.toUpperCase();
+      }
+
+      if (filters.from) {
+        params.from = filters.from;
+      }
+
+      if (filters.to) {
+        params.to = filters.to;
       }
 
       await loadWorkflowList(params);
@@ -69,7 +83,7 @@ export const WorkflowListPage = () => {
         error instanceof Error ? error.message : "Gagal memuat workflow";
       showToast(message, "error");
     }
-  }, [page, limit, debouncedSearch, statusFilter, loadWorkflowList]);
+  }, [page, limit, debouncedSearch, statusFilter, filters.from, filters.to, loadWorkflowList]);
 
   useEffect(() => {
     fetchWorkflows();
@@ -86,6 +100,20 @@ export const WorkflowListPage = () => {
     (option: BasicSelectOpt<string | number> | null) => {
       const value = option?.value as string;
       setFilter("status", value === "all" ? null : value);
+    },
+    [setFilter],
+  );
+
+  const handleFromDateChange = useCallback(
+    (date: Date | undefined) => {
+      setFilter("from", date ? dayjs(date).format("YYYY-MM-DD") : null);
+    },
+    [setFilter],
+  );
+
+  const handleToDateChange = useCallback(
+    (date: Date | undefined) => {
+      setFilter("to", date ? dayjs(date).format("YYYY-MM-DD") : null);
     },
     [setFilter],
   );
@@ -176,11 +204,7 @@ export const WorkflowListPage = () => {
         size: 150,
         cell: ({ row }) => (
           <span className="text-left block">
-            {new Date(row.original.createdAt).toLocaleDateString("id-ID", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric",
-            })}
+            {dayjs(row.original.createdAt).utc().format("DD MMM YYYY")}
           </span>
         ),
       },
@@ -200,7 +224,7 @@ export const WorkflowListPage = () => {
         </Button>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row gap-4">
         <InputField
           value={search}
           onChange={handleSearchChange}
@@ -216,8 +240,24 @@ export const WorkflowListPage = () => {
           placeholder="Status"
           isSearchable={true}
           isClearable={true}
-          selectClassName="w-full sm:w-[180px]"
+          selectClassName="w-full lg:w-[180px]"
         />
+        <div className="flex items-center gap-2">
+          <CalendarSelect
+            value={fromDate}
+            onChange={handleFromDateChange}
+            placeholder="Dari Tanggal"
+            containerClassName="w-full lg:w-[160px]"
+          />
+          <span className="text-gray-400">-</span>
+          <CalendarSelect
+            value={toDate}
+            onChange={handleToDateChange}
+            placeholder="Sampai Tanggal"
+            containerClassName="w-full lg:w-[160px]"
+            disabledCalendar={{ before: fromDate || new Date("2020-01-01") }}
+          />
+        </div>
       </div>
 
       <div className="h-[calc(100vh-280px)]">

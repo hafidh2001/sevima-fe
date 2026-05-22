@@ -31,6 +31,8 @@ export const useWorkflowStore = create<WorkflowStore>((set) => ({
     status?: WorkflowStatusEnum;
     sortBy?: string;
     sortOrder?: "asc" | "desc";
+    from?: string;
+    to?: string;
   }>) => {
     set({ isLoading: true, error: null });
 
@@ -42,6 +44,8 @@ export const useWorkflowStore = create<WorkflowStore>((set) => ({
         status: params?.status,
         sortBy: params?.sortBy ?? "createdAt",
         sortOrder: params?.sortOrder ?? "desc",
+        from: params?.from,
+        to: params?.to,
       });
 
       const workflowData: WorkflowData = {
