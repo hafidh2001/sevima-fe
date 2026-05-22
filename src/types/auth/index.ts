@@ -24,5 +24,5 @@ export interface IRegisterRequest {
   password: string;
   name: string;
   tenantSlug: string;
-  role?: "ADMIN" | "EDITOR" | "VIEWER";
+  role?: RoleEnum;
 }
