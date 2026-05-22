@@ -16,4 +16,13 @@ export class ROUTES {
   static get logout() {
     return `/logout` as const;
   }
+
+  // Workflow Routes
+  static get workflows() {
+    return `/workflows` as const;
+  }
+
+  static get workflowList() {
+    return `/workflows/list` as const;
+  }
 }

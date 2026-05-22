@@ -6,7 +6,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { GuestRoute } from "@/components/auth/GuestRoute";
 import { RoleEnum } from "@/types";
 import { useAuthStore } from "@/store/authStore";
-import { LoginPage, RegisterPage } from "./pages";
+import { LoginPage, RegisterPage, WorkflowListPage } from "./pages";
 
 function App() {
   const { isInitialized } = useAuthStore();
@@ -70,6 +70,19 @@ function App() {
                     Multi-Tenant Workflow Orchestration Engine
                   </p>
                 </div>
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={ROUTES.workflowList}
+          element={
+            <ProtectedRoute
+              allowedRoles={[RoleEnum.ADMIN, RoleEnum.EDITOR, RoleEnum.VIEWER]}
+            >
+              <AdminLayout>
+                <WorkflowListPage />
               </AdminLayout>
             </ProtectedRoute>
           }
