@@ -23,6 +23,6 @@ export interface IRegisterRequest {
   email: string;
   password: string;
   name: string;
-  tenantSlug: string;
+  tenantId: number;
   role?: RoleEnum;
 }

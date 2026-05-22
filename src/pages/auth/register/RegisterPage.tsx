@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { authApi } from "@/services/authApi";
-import { tenantApi } from "@/services/tenantApi";
+import { useMasterStore } from "@/store/masterStore";
 import { ROUTES } from "@/utils/routes";
 import { Button } from "@/components/ui/button";
 import { InputField } from "@/components/fields/inputField";
@@ -13,12 +13,14 @@ import { registerSchema, RegisterFormData } from "@/validations/auth/register";
 import { showToast } from "@/utils/toast";
 import { Spinner } from "@/components/Spinner";
 import { LockIcon, MailIcon, UserIcon } from "lucide-react";
-import { BasicSelectOpt } from "@/types";
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
-  const [tenantOptions, setTenantOptions] = useState<BasicSelectOpt[]>([]);
-  const [isLoadingTenants, setIsLoadingTenants] = useState(true);
+  const {
+    tenantOptions,
+    isLoadingTenantOptions,
+    fetchTenantOptions,
+  } = useMasterStore();
 
   const {
     control,
@@ -31,28 +33,13 @@ export const RegisterPage = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      tenantSlug: "",
+      tenantId: 0,
     },
   });
 
   useEffect(() => {
-    const fetchTenants = async () => {
-      try {
-        const tenants = await tenantApi.getAll();
-        const options = tenants.map((t) => ({
-          label: t.name,
-          value: t.slug,
-        }));
-        setTenantOptions(options);
-      } catch {
-        showToast("Gagal memuat daftar tenant", "error");
-      } finally {
-        setIsLoadingTenants(false);
-      }
-    };
-
-    fetchTenants();
-  }, []);
+    fetchTenantOptions();
+  }, [fetchTenantOptions]);
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
@@ -60,7 +47,7 @@ export const RegisterPage = () => {
         email: data.email,
         password: data.password,
         name: data.name,
-        tenantSlug: data.tenantSlug,
+        tenantId: data.tenantId,
       });
 
       showToast(`Registrasi berhasil! User ID: ${response.userId}`, "success");
@@ -141,18 +128,18 @@ export const RegisterPage = () => {
                 Tenant
               </label>
               <Controller
-                name="tenantSlug"
+                name="tenantId"
                 control={control}
                 render={({ field }) => (
                   <SingleSelect
                     {...field}
                     value={field.value ? tenantOptions.find((t) => t.value === field.value) : null}
-                    onChange={(option) => field.onChange(option?.value || "")}
+                    onChange={(option) => field.onChange(option?.value ?? 0)}
                     options={tenantOptions}
-                    placeholder={isLoadingTenants ? "Memuat tenant..." : "Pilih tenant"}
+                    placeholder={isLoadingTenantOptions ? "Memuat tenant..." : "Pilih tenant"}
                     isClearable={false}
                     isSearchable
-                    errorMessage={errors.tenantSlug?.message}
+                    errorMessage={errors.tenantId?.message}
                   />
                 )}
               />
@@ -193,7 +180,7 @@ export const RegisterPage = () => {
             {/* Register Button */}
             <Button
               type="submit"
-              disabled={isSubmitting || isLoadingTenants}
+              disabled={isSubmitting || isLoadingTenantOptions}
               className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-md hover:shadow-lg transition-all duration-200 mt-6"
             >
               {isSubmitting ? (
