@@ -74,7 +74,7 @@ export const LoginPage = () => {
 
         {/* Login Card */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
             Masuk ke Akun Anda
           </h2>
 
@@ -152,6 +152,18 @@ export const LoginPage = () => {
               {isLoading ? <Spinner text="Memuat..." /> : "Masuk"}
             </Button>
           </form>
+
+          {/* Register Link */}
+          <p className="text-center text-sm text-gray-500 mt-4">
+            Belum punya akun?{" "}
+            <button
+              type="button"
+              onClick={() => navigate(ROUTES.register)}
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              Daftar
+            </button>
+          </p>
         </div>
 
         {/* Footer */}

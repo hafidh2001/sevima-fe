@@ -6,7 +6,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { GuestRoute } from "@/components/auth/GuestRoute";
 import { RoleEnum } from "@/types";
 import { useAuthStore } from "@/store/authStore";
-import { LoginPage } from "./pages";
+import { LoginPage, RegisterPage } from "./pages";
 
 function App() {
   const { isInitialized } = useAuthStore();
@@ -38,6 +38,15 @@ function App() {
           element={
             <GuestRoute>
               <LoginPage />
+            </GuestRoute>
+          }
+        />
+
+        <Route
+          path={ROUTES.register}
+          element={
+            <GuestRoute>
+              <RegisterPage />
             </GuestRoute>
           }
         />

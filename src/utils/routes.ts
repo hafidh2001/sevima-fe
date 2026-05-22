@@ -9,6 +9,10 @@ export class ROUTES {
     return `/auth/login` as const;
   }
 
+  static get register() {
+    return `/auth/register` as const;
+  }
+
   static get logout() {
     return `/logout` as const;
   }

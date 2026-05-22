@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { ILoginRequest, TokenResponse } from "@/types/auth";
+import type { ILoginRequest, IRegisterRequest, TokenResponse } from "@/types/auth";
 
 // API Configuration from environment variables
 const API_URL = import.meta.env.VITE_API_URL;
@@ -54,6 +54,31 @@ export const authApi = {
       const { data } = await apiClient.post<TokenResponse>(
         "auth/refresh",
         { refreshToken },
+      );
+
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        if (responseData?.message) {
+          throw new Error(responseData.message);
+        }
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  },
+
+  /**
+   * Register new user
+   */
+  async register(
+    payload: IRegisterRequest,
+  ): Promise<{ userId: number }> {
+    try {
+      const { data } = await apiClient.post<{ userId: number }>(
+        "auth/register",
+        payload,
       );
 
       return data;

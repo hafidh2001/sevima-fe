@@ -18,3 +18,11 @@ export interface TokenResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface IRegisterRequest {
+  email: string;
+  password: string;
+  name: string;
+  tenantSlug: string;
+  role?: "ADMIN" | "EDITOR" | "VIEWER";
+}
