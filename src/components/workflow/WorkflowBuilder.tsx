@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { InputField } from "@/components/fields/inputField";
 import { SingleSelect } from "@/components/fields/singleSelect";
 import { useMasterStore } from "@/store/masterStore";
+import { showToast } from "@/utils/toast";
 import type { WorkflowNode, WorkflowEdge, WorkflowDefinition } from "@/types/workflow";
 
 interface WorkflowBuilderProps {
@@ -33,15 +34,21 @@ export const WorkflowBuilder = ({ definition, onChange, errors }: WorkflowBuilde
 
   // Node handlers
   const handleAddNode = useCallback(() => {
-    if (!newNodeId.trim() || !newNodeName.trim()) return;
+    // Validate required fields
+    if (!newNodeId.trim() || !newNodeName.trim()) {
+      showToast("Node ID dan Nama harus diisi", "error", { duration: 3000 });
+      return;
+    }
 
     // Validate ID format (alphanumeric, underscore, hyphen only)
     if (!/^[a-zA-Z0-9_-]+$/.test(newNodeId)) {
+      showToast("Node ID hanya boleh mengandung huruf, angka, underscore, dan hyphen", "error", { duration: 3000 });
       return;
     }
 
     // Check for duplicate ID
     if (definition.nodes.some((n) => n.id === newNodeId)) {
+      showToast(`Node ID "${newNodeId}" sudah digunakan`, "error", { duration: 3000 });
       return;
     }
 
@@ -57,6 +64,7 @@ export const WorkflowBuilder = ({ definition, onChange, errors }: WorkflowBuilde
       nodes: [...definition.nodes, newNode],
     });
 
+    showToast("Node berhasil ditambahkan", "success", { duration: 2000 });
     setNewNodeId("");
     setNewNodeName("");
   }, [newNodeId, newNodeType, newNodeName, definition, onChange]);
@@ -84,17 +92,30 @@ export const WorkflowBuilder = ({ definition, onChange, errors }: WorkflowBuilde
 
   // Edge handlers
   const handleAddEdge = useCallback(() => {
-    if (!newEdgeFrom.trim() || !newEdgeTo.trim()) return;
-    if (newEdgeFrom === newEdgeTo) return;
+    if (!newEdgeFrom.trim() || !newEdgeTo.trim()) {
+      showToast("Pilih node sumber dan target", "error", { duration: 3000 });
+      return;
+    }
+    if (newEdgeFrom === newEdgeTo) {
+      showToast("Node sumber dan target tidak boleh sama", "error", { duration: 3000 });
+      return;
+    }
 
     // Check if edge already exists
     if (definition.edges.some((e) => e.from === newEdgeFrom && e.to === newEdgeTo)) {
+      showToast("Koneksi sudah ada", "error", { duration: 3000 });
       return;
     }
 
     // Check if nodes exist
-    if (!definition.nodes.some((n) => n.id === newEdgeFrom)) return;
-    if (!definition.nodes.some((n) => n.id === newEdgeTo)) return;
+    if (!definition.nodes.some((n) => n.id === newEdgeFrom)) {
+      showToast("Node sumber tidak ditemukan", "error", { duration: 3000 });
+      return;
+    }
+    if (!definition.nodes.some((n) => n.id === newEdgeTo)) {
+      showToast("Node target tidak ditemukan", "error", { duration: 3000 });
+      return;
+    }
 
     const newEdge: WorkflowEdge = {
       from: newEdgeFrom.trim(),
@@ -106,6 +127,7 @@ export const WorkflowBuilder = ({ definition, onChange, errors }: WorkflowBuilde
       edges: [...definition.edges, newEdge],
     });
 
+    showToast("Koneksi berhasil ditambahkan", "success", { duration: 2000 });
     setNewEdgeFrom("");
     setNewEdgeTo("");
   }, [newEdgeFrom, newEdgeTo, definition, onChange]);
@@ -146,26 +168,23 @@ export const WorkflowBuilder = ({ definition, onChange, errors }: WorkflowBuilde
             value={newNodeId}
             onChange={setNewNodeId}
             placeholder="Node ID (e.g., step1)"
-            disabled={editingNodeId !== null}
           />
           <SingleSelect
             value={nodeTypeOptions.find((t) => t.value === newNodeType) || null}
             onChange={(opt) => setNewNodeType(opt?.value as string)}
             options={nodeTypeOptions}
             placeholder="Type"
-            disabled={editingNodeId !== null}
             isClearable={false}
           />
           <InputField
             value={newNodeName}
             onChange={setNewNodeName}
             placeholder="Node Name"
-            disabled={editingNodeId !== null}
           />
           <Button
             type="button"
             onClick={handleAddNode}
-            disabled={!newNodeId.trim() || !newNodeName.trim() || editingNodeId !== null}
+            disabled={!newNodeId.trim() || !newNodeName.trim()}
             className="bg-blue-600 hover:bg-blue-700"
           >
             <PlusIcon className="h-4 w-4 mr-1" />
