@@ -166,6 +166,24 @@ export interface GlobalRunStats {
   averageDurationMs: number;
 }
 
+// Workflow Version Types
+export interface WorkflowVersion {
+  id: number;
+  workflowDefinitionId: number;
+  version: number;
+  definition: WorkflowDefinition;
+  createdAt: string;
+}
+
+export interface WorkflowVersionListResponse {
+  data: WorkflowVersion[];
+}
+
+export interface RollbackResponse {
+  message: string;
+  version: WorkflowVersion;
+}
+
 export interface WorkflowRunQueryParams {
   page?: number;
   limit?: number;

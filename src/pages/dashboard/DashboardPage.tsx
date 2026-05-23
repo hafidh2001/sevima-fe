@@ -1,4 +1,4 @@
-import { GlobalHealthPanel } from "@/components/dashboard/GlobalHealthPanel";
+import { GlobalHealthPanel } from "./_components/GlobalHealthPanel";
 import { useAuthStore } from "@/store/authStore";
 import { WorkflowStatusEnum } from "@/types";
 import { workflowApi } from "@/services/workflowApi";

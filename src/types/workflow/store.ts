@@ -4,6 +4,7 @@ import {
   WorkflowResponse,
   CreateWorkflowPayload,
   UpdateWorkflowPayload,
+  WorkflowVersion,
 } from ".";
 
 export interface WorkflowData {
@@ -23,6 +24,10 @@ export interface WorkflowState {
   error: Nullable<string>;
   success: Nullable<string>;
   hasInitialized: boolean;
+  // Version history state
+  versions: WorkflowVersion[];
+  selectedVersion: WorkflowVersion | null;
+  isLoadingVersions: boolean;
 }
 
 export interface WorkflowActions {
@@ -31,6 +36,9 @@ export interface WorkflowActions {
   createWorkflow: (payload: CreateWorkflowPayload) => Promise<WorkflowResponse>;
   updateWorkflow: (id: number, payload: UpdateWorkflowPayload) => Promise<WorkflowResponse>;
   deleteWorkflow: (id: number) => Promise<void>;
+  loadVersions: (workflowId: number) => Promise<void>;
+  loadVersion: (workflowId: number, version: number) => Promise<void>;
+  rollback: (workflowId: number, targetVersion: number) => Promise<void>;
   reset: () => void;
 }
 

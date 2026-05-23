@@ -26,6 +26,7 @@ import {
   StepRun,
 } from "@/types/workflow";
 import { sseService, getStepStatusColor } from "@/services/sseService";
+import { VersionHistory } from "./_components/VersionHistory";
 import { Button } from "@/components/ui/button";
 import { showToast } from "@/utils/toast";
 import { ROUTES } from "@/utils/routes";
@@ -44,6 +45,8 @@ import {
   AlertCircle,
   Ban,
   RotateCcw,
+  GitBranch,
+  History,
 } from "lucide-react";
 
 type NodeData = {
@@ -443,6 +446,7 @@ export default function WorkflowDetailPage() {
   const [stepStatuses, setStepStatuses] = useState<Map<string, StepStatusEnum>>(new Map());
   const [activeRunId, setActiveRunId] = useState<number | null>(null);
   const [isRunning, setIsRunning] = useState(false);
+  const [activeTab, setActiveTab] = useState<"diagram" | "history" | "versions">("diagram");
 
   const unsubscribeRef = useRef<(() => void) | null>(null);
 
@@ -743,124 +747,167 @@ export default function WorkflowDetailPage() {
         </div>
       </div>
 
-      {/* DAG Visualization */}
+      {/* Tabs */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 bg-gray-50">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-semibold text-gray-800">Diagram Workflow</h2>
-              <p className="text-sm text-gray-500 mt-1">
-                {hasDefinition
-                  ? `${workflow.latestVersion?.definition.nodes.length} step • ${workflow.latestVersion?.definition.edges.length} koneksi`
-                  : "Tidak ada definisi step"}
-              </p>
-            </div>
-            {activeRunId && (
-              <div className="flex items-center gap-2 text-sm text-blue-600">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Run #{activeRunId} sedang berjalan
-              </div>
+        <div className="flex border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab("diagram")}
+            className={`flex items-center gap-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === "diagram"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            <GitBranch className="h-4 w-4" />
+            Diagram
+          </button>
+          <button
+            onClick={() => setActiveTab("history")}
+            className={`flex items-center gap-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === "history"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            <History className="h-4 w-4" />
+            Run History
+            {runsMeta && runsMeta.total > 0 && (
+              <span className="ml-1 px-2 py-0.5 bg-gray-100 rounded-full text-xs">
+                {runsMeta.total}
+              </span>
             )}
-          </div>
-          <div className="flex items-center gap-4 mt-2">
-            <div className="flex items-center gap-1 text-xs">
-              <div className="w-3 h-3 rounded-full bg-gray-400" />
-              <span>Pending</span>
-            </div>
-            <div className="flex items-center gap-1 text-xs">
-              <div className="w-3 h-3 rounded-full bg-blue-500" />
-              <span>Running</span>
-            </div>
-            <div className="flex items-center gap-1 text-xs">
-              <div className="w-3 h-3 rounded-full bg-green-500" />
-              <span>Success</span>
-            </div>
-            <div className="flex items-center gap-1 text-xs">
-              <div className="w-3 h-3 rounded-full bg-red-500" />
-              <span>Failed</span>
-            </div>
-          </div>
+          </button>
+          <button
+            onClick={() => setActiveTab("versions")}
+            className={`flex items-center gap-2 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === "versions"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            <Clock className="h-4 w-4" />
+            Versions
+            <span className="ml-1 px-2 py-0.5 bg-gray-100 rounded-full text-xs">
+              {workflow.versionCount}
+            </span>
+          </button>
         </div>
 
-        {hasDefinition ? (
-          <div className="h-[400px]">
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              nodeTypes={nodeTypes}
-              fitView
-              fitViewOptions={{ padding: 0.3 }}
-              minZoom={0.3}
-              maxZoom={2}
-              attributionPosition="bottom-left"
-            >
-              <Controls />
-              <Background />
-            </ReactFlow>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center h-64 text-gray-400">
-            <p>Belum ada definisi workflow</p>
-          </div>
-        )}
-      </div>
-
-      {/* Run History */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 bg-gray-50">
-          <h2 className="font-semibold text-gray-800">Riwayat Run</h2>
-          <p className="text-sm text-gray-500 mt-1">
-            {runsMeta?.total || 0} total run
-          </p>
-        </div>
-
-        <div className="p-4 space-y-3 max-h-[500px] overflow-y-auto">
-          {isLoadingRuns && runs.length === 0 ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
-            </div>
-          ) : runs.length > 0 ? (
+        <div className="p-4">
+          {/* Diagram Tab */}
+          {activeTab === "diagram" && (
             <>
-              {runs.map((run) => (
-                <RunHistoryItem
-                  key={run.id}
-                  run={run}
-                  isExpanded={expandedRunId === run.id}
-                  onToggle={() =>
-                    setExpandedRunId(expandedRunId === run.id ? null : run.id)
-                  }
-                  onCancel={() => handleCancelRun(run.id)}
-                  onRetry={() => handleRetryRun(run.id)}
-                  workflowId={workflow.id}
-                />
-              ))}
-
-              {runsMeta && runsMeta.page < runsMeta.totalPages && (
-                <div className="flex justify-center pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => fetchRuns(runsMeta.page + 1)}
-                    disabled={isLoadingRuns}
+              {activeRunId && (
+                <div className="flex items-center gap-2 mb-4 text-sm text-blue-600">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Run #{activeRunId} sedang berjalan
+                </div>
+              )}
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-1 text-xs">
+                  <div className="w-3 h-3 rounded-full bg-gray-400" />
+                  <span>Pending</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs">
+                  <div className="w-3 h-3 rounded-full bg-blue-500" />
+                  <span>Running</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs">
+                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                  <span>Success</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs">
+                  <div className="w-3 h-3 rounded-full bg-red-500" />
+                  <span>Failed</span>
+                </div>
+              </div>
+              {hasDefinition ? (
+                <div className="h-[400px]">
+                  <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    nodeTypes={nodeTypes}
+                    fitView
+                    fitViewOptions={{ padding: 0.3 }}
+                    minZoom={0.3}
+                    maxZoom={2}
+                    attributionPosition="bottom-left"
                   >
-                    {isLoadingRuns ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Memuat...
-                      </>
-                    ) : (
-                      "Muat lebih banyak"
-                    )}
-                  </Button>
+                    <Controls />
+                    <Background />
+                  </ReactFlow>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-64 text-gray-400">
+                  <p>Belum ada definisi workflow</p>
                 </div>
               )}
             </>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>Belum ada riwayat run</p>
+          )}
+
+          {/* Run History Tab */}
+          {activeTab === "history" && (
+            <div className="space-y-3 max-h-[500px] overflow-y-auto">
+              <p className="text-sm text-gray-500 mb-4">
+                {runsMeta?.total || 0} total run
+              </p>
+              {isLoadingRuns && runs.length === 0 ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+                </div>
+              ) : runs.length > 0 ? (
+                <>
+                  {runs.map((run) => (
+                    <RunHistoryItem
+                      key={run.id}
+                      run={run}
+                      isExpanded={expandedRunId === run.id}
+                      onToggle={() =>
+                        setExpandedRunId(expandedRunId === run.id ? null : run.id)
+                      }
+                      onCancel={() => handleCancelRun(run.id)}
+                      onRetry={() => handleRetryRun(run.id)}
+                      workflowId={workflow.id}
+                    />
+                  ))}
+
+                  {runsMeta && runsMeta.page < runsMeta.totalPages && (
+                    <div className="flex justify-center pt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fetchRuns(runsMeta.page + 1)}
+                        disabled={isLoadingRuns}
+                      >
+                        {isLoadingRuns ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Memuat...
+                          </>
+                        ) : (
+                          "Muat lebih banyak"
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>Belum ada riwayat run</p>
+                </div>
+              )}
             </div>
+          )}
+
+          {/* Versions Tab */}
+          {activeTab === "versions" && (
+            <VersionHistory
+              workflowId={workflow.id}
+              currentVersion={workflow.latestVersion?.version || 0}
+              onRollbackComplete={fetchWorkflow}
+            />
           )}
         </div>
       </div>

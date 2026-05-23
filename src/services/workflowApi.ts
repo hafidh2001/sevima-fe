@@ -6,6 +6,8 @@ import {
   WorkflowResponse,
   CreateWorkflowPayload,
   UpdateWorkflowPayload,
+  WorkflowVersion,
+  RollbackResponse,
 } from "@/types/workflow";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -110,6 +112,58 @@ export const workflowApi = {
   async delete(id: number): Promise<void> {
     try {
       await apiClient.delete(`workflows/${id}`);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        if (responseData?.message) {
+          throw new Error(responseData.message);
+        }
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  },
+
+  async getVersions(workflowId: number): Promise<WorkflowVersion[]> {
+    try {
+      const { data } = await apiClient.get<WorkflowVersion[]>(`workflows/${workflowId}/versions`);
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        if (responseData?.message) {
+          throw new Error(responseData.message);
+        }
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  },
+
+  async getVersion(workflowId: number, version: number): Promise<WorkflowVersion> {
+    try {
+      const { data } = await apiClient.get<WorkflowVersion>(
+        `workflows/${workflowId}/versions/${version}`
+      );
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        if (responseData?.message) {
+          throw new Error(responseData.message);
+        }
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  },
+
+  async rollback(workflowId: number, targetVersion: number): Promise<RollbackResponse> {
+    try {
+      const { data } = await apiClient.post<RollbackResponse>(
+        `workflows/${workflowId}/rollback/${targetVersion}`
+      );
+      return data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const responseData = error.response?.data;

@@ -20,6 +20,10 @@ const initialState = {
   error: null as string | null,
   success: null as string | null,
   hasInitialized: false,
+  // Version history state
+  versions: [],
+  selectedVersion: null,
+  isLoadingVersions: false,
 };
 
 export const useWorkflowStore = create<WorkflowStore>((set) => ({
@@ -128,6 +132,51 @@ export const useWorkflowStore = create<WorkflowStore>((set) => ({
       set({ isLoading: false, success: "Workflow berhasil dihapus" });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Gagal menghapus workflow";
+      set({ error: message, isLoading: false });
+      throw error;
+    }
+  },
+
+  loadVersions: async (workflowId: number) => {
+    set({ isLoadingVersions: true, error: null });
+
+    try {
+      const versions = await workflowApi.getVersions(workflowId);
+      set({ versions, isLoadingVersions: false });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Gagal memuat versi";
+      set({ error: message, isLoadingVersions: false });
+      throw error;
+    }
+  },
+
+  loadVersion: async (workflowId: number, version: number) => {
+    set({ isLoadingVersions: true, error: null });
+
+    try {
+      const selectedVersion = await workflowApi.getVersion(workflowId, version);
+      set({ selectedVersion, isLoadingVersions: false });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Gagal memuat detail versi";
+      set({ error: message, isLoadingVersions: false });
+      throw error;
+    }
+  },
+
+  rollback: async (workflowId: number, targetVersion: number) => {
+    set({ isLoading: true, error: null, success: null });
+
+    try {
+      const result = await workflowApi.rollback(workflowId, targetVersion);
+      set({
+        success: result.message,
+        isLoading: false,
+      });
+      // Refresh workflow detail and versions after rollback
+      await useWorkflowStore.getState().loadWorkflowDetail(workflowId);
+      await useWorkflowStore.getState().loadVersions(workflowId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Gagal rollback";
       set({ error: message, isLoading: false });
       throw error;
     }
