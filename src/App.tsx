@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from "react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { ROUTES } from "@/utils/routes";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -7,6 +8,7 @@ import { GuestRoute } from "@/components/auth/GuestRoute";
 import { RoleEnum } from "@/types";
 import { useAuthStore } from "@/store/authStore";
 import { LoginPage, RegisterPage, DashboardPage, WorkflowListPage, WorkflowFormPage, WorkflowDetailPage } from "./pages";
+import { queryClient } from "@/configs/queryClient";
 
 function App() {
   const { isInitialized } = useAuthStore();
@@ -28,10 +30,11 @@ function App() {
   }
 
   return (
-    <BrowserRouter
-      future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-    >
-      <Routes>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <Routes>
         {/* Auth */}
         <Route
           path={ROUTES.login}
@@ -135,7 +138,8 @@ function App() {
           }
         />
       </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 

@@ -179,7 +179,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Quick Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Link
           to={ROUTES.workflowCreate}
           className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-white hover:shadow-lg transition-shadow"
@@ -201,32 +201,7 @@ export default function DashboardPage() {
             View and edit existing workflows
           </p>
         </Link>
-
-        <div className="bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl p-6 text-white">
-          <Activity className="h-8 w-8 mb-3" />
-          <h3 className="font-semibold text-lg">Monitor Runs</h3>
-          <p className="text-purple-100 text-sm mt-1">
-            Track workflow execution status
-          </p>
-        </div>
       </section>
     </div>
-  );
-}
-
-function Activity(props: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={props.className}
-    >
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-    </svg>
   );
 }
