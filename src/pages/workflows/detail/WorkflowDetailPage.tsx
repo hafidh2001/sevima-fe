@@ -26,10 +26,12 @@ import {
   StepRun,
 } from "@/types/workflow";
 import { sseService, getStepStatusColor } from "@/services/sseService";
+import { useAuthStore } from "@/store/authStore";
 import { VersionHistory } from "./_components/VersionHistory";
 import { Button } from "@/components/ui/button";
 import { showToast } from "@/utils/toast";
 import { ROUTES } from "@/utils/routes";
+import { RoleEnum } from "@/types";
 import { formatDistanceToNow, format } from "date-fns";
 import { id } from "date-fns/locale";
 import {
@@ -431,6 +433,9 @@ function RunHistoryItem({
 export default function WorkflowDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const canEdit = user?.role === RoleEnum.ADMIN || user?.role === RoleEnum.EDITOR;
+
   const [workflow, setWorkflow] = useState<WorkflowResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -716,34 +721,36 @@ export default function WorkflowDetailPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate(ROUTES.workflowEdit.replace(":id", String(workflow.id)))}
-            >
-              <Pencil className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleTriggerRun}
-              disabled={isRunning || !hasDefinition}
-            >
-              {isRunning ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Menjalankan...
-                </>
-              ) : (
-                <>
-                  <Play className="h-4 w-4 mr-2" />
-                  Jalankan
-                </>
-              )}
-            </Button>
-          </div>
+          {canEdit && (
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate(ROUTES.workflowEdit.replace(":id", String(workflow.id)))}
+              >
+                <Pencil className="h-4 w-4 mr-2" />
+                Edit
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleTriggerRun}
+                disabled={isRunning || !hasDefinition}
+              >
+                {isRunning ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Menjalankan...
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-4 w-4 mr-2" />
+                    Jalankan
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 

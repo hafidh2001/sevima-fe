@@ -11,11 +11,12 @@ import { CalendarSelect } from "@/components/fields/calendarSelect";
 import { ConfirmationModal } from "@/components/confirmationModal";
 import { useWorkflowStore } from "@/store/workflowStore";
 import { useMasterStore } from "@/store/masterStore";
+import { useAuthStore } from "@/store/authStore";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { showToast } from "@/utils/toast";
 import { DEFAULT_PAGE_SIZE } from "@/constants/table";
 import { ROUTES } from "@/utils/routes";
-import { BasicSelectOpt } from "@/types";
+import { BasicSelectOpt, RoleEnum } from "@/types";
 import { WorkflowResponse } from "@/types/workflow";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -32,6 +33,9 @@ export const WorkflowListPage = () => {
     success,
     error,
   } = useWorkflowStore();
+
+  const { user } = useAuthStore();
+  const canEdit = user?.role === RoleEnum.ADMIN || user?.role === RoleEnum.EDITOR;
 
   const {
     workflowStatusOptions,
@@ -267,28 +271,32 @@ export const WorkflowListPage = () => {
               >
                 <Eye className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleEdit}
-                className="h-8 w-8 bg-yellow-500 text-white hover:bg-yellow-600"
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleDeleteClick}
-                className="h-8 w-8 bg-red-600 text-white hover:bg-red-700"
-              >
-                <Trash className="h-4 w-4" />
-              </Button>
+              {canEdit && (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleEdit}
+                    className="h-8 w-8 bg-yellow-500 text-white hover:bg-yellow-600"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleDeleteClick}
+                    className="h-8 w-8 bg-red-600 text-white hover:bg-red-700"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
             </div>
           );
         },
       },
     ],
-    [navigate],
+    [navigate, canEdit],
   );
 
   return (
@@ -297,13 +305,15 @@ export const WorkflowListPage = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Workflows</h1>
         </div>
-        <Button
-          className="bg-blue-600 hover:bg-blue-700"
-          onClick={() => navigate(ROUTES.workflowCreate)}
-        >
-          <PlusIcon className="h-4 w-4 mr-2" />
-          Buat Workflow
-        </Button>
+        {canEdit && (
+          <Button
+            className="bg-blue-600 hover:bg-blue-700"
+            onClick={() => navigate(ROUTES.workflowCreate)}
+          >
+            <PlusIcon className="h-4 w-4 mr-2" />
+            Buat Workflow
+          </Button>
+        )}
       </div>
 
       <div className="flex flex-col lg:flex-row gap-4">

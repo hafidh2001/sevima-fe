@@ -27,6 +27,12 @@ export const Sidebar = () => {
 
   const isWorkflowActive = location.pathname.startsWith("/workflows");
 
+  const filteredNavItems = navItems.filter((item) => {
+    if (item.label === "Logout") return false;
+    if (!item.roles) return true;
+    return user && item.roles.includes(user.role);
+  });
+
   const navLinkClass = (isActive: boolean) =>
     `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
       isActive
@@ -60,25 +66,23 @@ export const Sidebar = () => {
 
         {/* Nav */}
         <nav className="flex flex-col gap-1">
-          {navItems
-            .filter((item) => item.label !== "Logout")
-            .map((item) => {
-              const isWorkflow = item.to?.includes("/workflows");
-              const isActive = isWorkflow
-                ? isWorkflowActive
-                : location.pathname === item.to;
+          {filteredNavItems.map((item) => {
+            const isWorkflow = item.to?.includes("/workflows");
+            const isActive = isWorkflow
+              ? isWorkflowActive
+              : location.pathname === item.to;
 
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to!}
-                  className={() => navLinkClass(isActive)}
-                >
-                  {item.icon}
-                  <span>{item.label}</span>
-                </NavLink>
-              );
-            })}
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to!}
+                className={() => navLinkClass(isActive)}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </NavLink>
+            );
+          })}
         </nav>
 
         {/* User Info & Logout - Always at bottom */}
@@ -113,26 +117,24 @@ export const Sidebar = () => {
           {/* Menu */}
           <aside className="relative w-72 h-[calc(100vh-4rem)] bg-white overflow-y-auto flex flex-col">
             <nav className="flex flex-col gap-1 p-4">
-              {navItems
-                .filter((item) => item.label !== "Logout")
-                .map((item) => {
-                  const isWorkflow = item.to?.includes("/workflows");
-                  const isActive = isWorkflow
-                    ? isWorkflowActive
-                    : location.pathname === item.to;
+              {filteredNavItems.map((item) => {
+                const isWorkflow = item.to?.includes("/workflows");
+                const isActive = isWorkflow
+                  ? isWorkflowActive
+                  : location.pathname === item.to;
 
-                  return (
-                    <NavLink
-                      key={item.to}
-                      to={item.to!}
-                      onClick={handleNavClick}
-                      className={() => navLinkClass(isActive)}
-                    >
-                      {item.icon}
-                      <span>{item.label}</span>
-                    </NavLink>
-                  );
-                })}
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to!}
+                    onClick={handleNavClick}
+                    className={() => navLinkClass(isActive)}
+                  >
+                    {item.icon}
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
             </nav>
 
             <div className="mt-auto border-y border-gray-200">
