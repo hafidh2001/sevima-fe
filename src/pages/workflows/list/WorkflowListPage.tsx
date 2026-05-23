@@ -12,7 +12,6 @@ import { useMasterStore } from "@/store/masterStore";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { showToast } from "@/utils/toast";
 import { DEFAULT_PAGE_SIZE } from "@/constants/table";
-import type { WorkflowStatusOption } from "@/types/master/store";
 import { BasicSelectOpt } from "@/types";
 import { WorkflowResponse } from "@/types/workflow";
 import dayjs from "dayjs";
@@ -50,7 +49,6 @@ export const WorkflowListPage = () => {
     searchDebounceMs: 500,
   });
 
-  const statusFilter = (filters.status as WorkflowStatusOption) || "all";
   const fromDate = filters.from ? new Date(filters.from as string) : undefined;
   const toDate = filters.to ? new Date(filters.to as string) : undefined;
 
@@ -59,23 +57,11 @@ export const WorkflowListPage = () => {
       const params: Record<string, unknown> = {
         page,
         limit,
+        name : debouncedSearch ?? undefined,
+        status : filters.status ?? undefined,
+        from: filters.from ?? undefined,
+        to: filters.to ?? undefined,
       };
-
-      if (debouncedSearch) {
-        params.name = debouncedSearch;
-      }
-
-      if (statusFilter !== "all") {
-        params.status = statusFilter.toUpperCase();
-      }
-
-      if (filters.from) {
-        params.from = filters.from;
-      }
-
-      if (filters.to) {
-        params.to = filters.to;
-      }
 
       await loadWorkflowList(params);
     } catch (error) {
@@ -83,7 +69,7 @@ export const WorkflowListPage = () => {
         error instanceof Error ? error.message : "Gagal memuat workflow";
       showToast(message, "error");
     }
-  }, [page, limit, debouncedSearch, statusFilter, filters.from, filters.to, loadWorkflowList]);
+  }, [page, limit, debouncedSearch, filters.status, filters.from, filters.to, loadWorkflowList]);
 
   useEffect(() => {
     fetchWorkflows();
@@ -128,11 +114,11 @@ export const WorkflowListPage = () => {
     [page, setLimit, setPage],
   );
 
-  const statusSelectValue = useMemo(() => {
+  const selectedWorkflowStatus = useMemo(() => {
     return (
-      workflowStatusOptions.find((opt) => opt.value === statusFilter) || null
+      workflowStatusOptions.find((opt) => opt.value === filters.status) || null
     );
-  }, [workflowStatusOptions, statusFilter]);
+  }, [workflowStatusOptions, filters.status]);
 
   const columns: ColumnDef<WorkflowResponse>[] = useMemo(
     () => [
@@ -233,7 +219,7 @@ export const WorkflowListPage = () => {
           containerClassName="flex-1 max-w-md"
         />
         <SingleSelect
-          value={statusSelectValue}
+          value={selectedWorkflowStatus}
           onChange={handleStatusChange}
           options={workflowStatusOptions}
           isLoading={isLoadingWorkflowStatusOptions}
