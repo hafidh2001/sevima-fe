@@ -1,0 +1,13 @@
+.git
+.gitignore
+node_modules
+dist
+coverage
+*.log
+.env.production
+.env.production.local
+src/**/*.spec.ts
+src/**/*.test.ts
+*.spec.ts
+*.test.ts
+.DS_Store
