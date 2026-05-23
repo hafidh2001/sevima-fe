@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { InputField } from "@/components/fields/inputField";
 import { Button } from "@/components/ui/button";
 import { TextareaField } from "@/components/fields/textareaField";
@@ -159,18 +159,19 @@ export const WorkflowFormPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => navigate(ROUTES.workflowList)}
-        >
-          <ArrowLeftIcon className="h-4 w-4" />
-        </Button>
-        <h1 className="text-2xl font-bold text-gray-900">
-          {isEditMode ? "Edit Workflow" : "Buat Workflow"}
-        </h1>
-      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate(ROUTES.workflowList)}
+        className="mb-4"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Kembali
+      </Button>
+
+      <h1 className="text-2xl font-bold text-gray-900">
+        {isEditMode ? "Edit Workflow" : "Buat Workflow"}
+      </h1>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
