@@ -122,25 +122,25 @@ export const AIWorkflowBuilderPage = () => {
         variant="ghost"
         size="sm"
         onClick={() => navigate(ROUTES.workflowList)}
-        className="mb-4"
+        className="mb-4 text-gray-700 dark:text-gray-300"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
         Kembali
       </Button>
 
       <div className="flex items-center gap-3">
-        <div className="p-2 bg-purple-100 rounded-lg">
-          <Wand2 className="h-5 w-5 text-purple-600" />
+        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+          <Wand2 className="h-5 w-5 text-purple-600 dark:text-purple-400" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">AI Workflow Builder</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">AI Workflow Builder</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Buat workflow dengan describing dalam bahasa natural
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-6">
         <div className="space-y-4">
           <div>
             <TextareaField
@@ -154,14 +154,14 @@ export const AIWorkflowBuilderPage = () => {
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 mb-2">Contoh prompt:</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Contoh prompt:</p>
             <div className="flex flex-wrap gap-2">
               {SUGGESTED_PROMPTS.map((prompt, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => setDescription(prompt)}
-                  className="text-xs px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 transition-colors"
+                  className="text-xs px-3 py-1.5 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full text-gray-700 dark:text-gray-300 transition-colors"
                   disabled={isGenerating}
                 >
                   {prompt.slice(0, 40)}...
@@ -203,31 +203,31 @@ export const AIWorkflowBuilderPage = () => {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
+            <AlertCircle className="h-5 w-5 text-red-500 dark:text-red-400 mt-0.5" />
             <div>
-              <p className="font-medium text-red-700">Gagal Membuat Workflow</p>
-              <p className="text-sm text-red-600 mt-1">{error}</p>
+              <p className="font-medium text-red-700 dark:text-red-300">Gagal Membuat Workflow</p>
+              <p className="text-sm text-red-600 dark:text-red-400 mt-1">{error}</p>
             </div>
           </div>
         </div>
       )}
 
       {generatedWorkflow && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 {generatedWorkflow.name}
               </h2>
               {generatedWorkflow.description && (
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   {generatedWorkflow.description}
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-2 text-green-600">
+            <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
               <CheckCircle className="h-5 w-5" />
               <span className="text-sm font-medium">Generated</span>
             </div>
@@ -239,7 +239,7 @@ export const AIWorkflowBuilderPage = () => {
             errors={definitionErrors}
           />
 
-          <div className="flex justify-end gap-3 pt-6 border-t mt-6">
+          <div className="flex justify-end gap-3 pt-6 border-t dark:border-gray-700 mt-6">
             <Button
               variant="outline"
               onClick={() => navigate(ROUTES.workflowList)}

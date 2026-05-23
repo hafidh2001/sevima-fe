@@ -46,31 +46,31 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="w-full max-w-md">
         {/* Logo & Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <Logo size="xl" />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
             FlowForge
           </h1>
-          <p className="text-gray-500 text-sm sm:text-base">
+          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
             Multi-Tenant Workflow Orchestration Engine
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-8">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-6 text-center">
             Masuk ke Akun Anda
           </h2>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
             </div>
           )}
 
@@ -86,7 +86,7 @@ export const LoginPage = () => {
                   label="Email"
                   type="email"
                   placeholder="Masukkan email"
-                  startIcon={<MailIcon className="h-5 w-5 text-gray-400" />}
+                  startIcon={<MailIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />}
                   errorMessage={errors.email?.message}
                   autoComplete="email"
                 />
@@ -102,7 +102,7 @@ export const LoginPage = () => {
                   {...field}
                   label="Password"
                   placeholder="Masukkan password"
-                  startIcon={<LockIcon className="h-5 w-5 text-gray-400" />}
+                  startIcon={<LockIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />}
                   errorMessage={errors.password?.message}
                   autoComplete="current-password"
                 />
@@ -123,7 +123,7 @@ export const LoginPage = () => {
                     />
                     <label
                       htmlFor="rememberMe"
-                      className="text-sm text-gray-600 font-normal cursor-pointer"
+                      className="text-sm text-gray-600 dark:text-gray-400 font-normal cursor-pointer"
                     >
                       Ingat saya
                     </label>
@@ -143,12 +143,12 @@ export const LoginPage = () => {
           </form>
 
           {/* Register Link */}
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
             Belum punya akun?{" "}
             <button
               type="button"
               onClick={() => navigate(ROUTES.register)}
-              className="text-blue-600 hover:text-blue-700 font-medium"
+              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
             >
               Daftar
             </button>
@@ -156,7 +156,7 @@ export const LoginPage = () => {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs sm:text-sm text-gray-400 mt-6">
+        <p className="text-center text-xs sm:text-sm text-gray-400 dark:text-gray-500 mt-6">
           &copy; {new Date().getFullYear()} FlowForge. Hak cipta dilindungi.
         </p>
       </div>

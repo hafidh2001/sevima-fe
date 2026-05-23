@@ -38,6 +38,8 @@ export const SingleSelect = forwardRef<Select, Props>(({
   const md = width >= 768;
   const fontSize = md ? "14px" : "16px";
 
+  const isDark = typeof window !== "undefined" && document.documentElement.classList.contains("dark");
+
   const handleChange = useCallback((e: BasicSelectOpt<string | number> | null) => {
     onChange?.(e);
   }, [onChange]);
@@ -73,6 +75,17 @@ export const SingleSelect = forwardRef<Select, Props>(({
     rest
   ]);
 
+  const controlBorderColor = errorMessage ? "#ef4444" : isDark ? "#4b5563" : "#d1d5db";
+  const disabledBg = isDark ? "#374151" : "#f3f4f6";
+  const disabledColor = isDark ? "#9ca3af" : "#9ca3af";
+  const bgColor = isDark ? "#1f2937" : "#ffffff";
+  const textColor = isDark ? "#f3f4f4" : "#111827";
+  const menuBg = isDark ? "#1f2937" : "#ffffff";
+  const optionHoverBg = isDark ? "#374151" : "#f3f4f6";
+  const optionSelectedBg = isDark ? "#3b82f6" : "#3b82f6";
+  const placeholderColor = isDark ? "#9ca3af" : "#6b7280";
+  const indicatorColor = isDark ? "#9ca3af" : "#6b7280";
+
   return (
     <div className="flex flex-col gap-1">
       <Select
@@ -87,15 +100,16 @@ export const SingleSelect = forwardRef<Select, Props>(({
           singleValue: (base) => ({
             ...base,
             fontSize,
+            color: textColor,
           }),
           control: (base, state) => ({
             ...base,
             borderRadius: "6px",
             cursor: state.isDisabled ? "not-allowed" : "pointer",
-            borderColor: errorMessage ? "#ef4444" : state.isDisabled ? "#d1d5db" : "#d1d5db",
-            border: state.isDisabled ? "1px solid #d1d5db" : "1px solid #d1d5db",
-            backgroundColor: state.isDisabled ? "#f3f4f6" : base.backgroundColor,
-            color: state.isDisabled ? "#9ca3af" : base.color,
+            borderColor: state.isDisabled ? disabledBg : controlBorderColor,
+            border: state.isDisabled ? "1px solid" : "1px solid",
+            backgroundColor: state.isDisabled ? disabledBg : bgColor,
+            color: state.isDisabled ? disabledColor : textColor,
             minHeight: "40px",
             fontSize,
           }),
@@ -103,6 +117,7 @@ export const SingleSelect = forwardRef<Select, Props>(({
             ...base,
             borderRadius: "6px",
             zIndex: popupContainer === "body" ? 10000 : 9999,
+            backgroundColor: menuBg,
           }),
           menuPortal: (base) => ({
             ...base,
@@ -112,11 +127,13 @@ export const SingleSelect = forwardRef<Select, Props>(({
             ...base,
             cursor: state.isDisabled ? "not-allowed" : "pointer",
             fontSize,
+            backgroundColor: state.isSelected ? optionSelectedBg : state.isFocused ? optionHoverBg : "transparent",
+            color: textColor,
           }),
           dropdownIndicator: (base, state) => ({
             ...base,
             display: "flex",
-            color: state.isDisabled ? "#9ca3af" : "#6b7280",
+            color: state.isDisabled ? disabledColor : indicatorColor,
           }),
           clearIndicator: (base) => ({
             ...base,
@@ -125,16 +142,18 @@ export const SingleSelect = forwardRef<Select, Props>(({
           placeholder: (base) => ({
             ...base,
             fontSize,
+            color: placeholderColor,
           }),
           input: (base) => ({
             ...base,
             fontSize,
+            color: textColor,
           }),
         }}
         {...(rest as any)}
       />
       {errorMessage && (
-        <p className="text-sm text-red-600">{errorMessage}</p>
+        <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
       )}
     </div>
   );

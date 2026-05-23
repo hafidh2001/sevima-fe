@@ -270,13 +270,13 @@ export const BaseTable = <
             const page = opt.meta?.page ?? (pagination.pageIndex + 1);
             const pageSize = opt.meta?.offset ?? pagination.pageSize;
             const rowNumber = (page - 1) * pageSize + context.row.index + 1;
-            return <span className="text-sm font-medium">{rowNumber}</span>;
+            return <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{rowNumber}</span>;
           }
           const currentPage = getPageFromUrlFn();
           const pageIndex = currentPage - 1;
           const pageSize = pagination.pageSize;
           const rowNumber = pageIndex * pageSize + context.row.index + 1;
-          return <span className="text-sm font-medium">{rowNumber}</span>;
+          return <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{rowNumber}</span>;
         },
       } as ColumnDef<T>);
     }
@@ -291,7 +291,7 @@ export const BaseTable = <
           return (
             <ChevronDown
               className={cn(
-                "h-4 w-4 transition-transform cursor-pointer text-muted-foreground hover:text-foreground",
+                "h-4 w-4 transition-transform cursor-pointer text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300",
                 row.getIsExpanded() && "rotate-180"
               )}
             />
@@ -359,7 +359,7 @@ export const BaseTable = <
   return (
     <div
       className={cn(
-        "w-full h-full relative border rounded-lg overflow-hidden",
+        "w-full h-full relative border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden",
         opt.className
       )}
       ref={div}
@@ -369,16 +369,16 @@ export const BaseTable = <
           <>
             <div className="flex-1 overflow-auto relative">
               {opt.isLoading && table.getRowModel().rows?.length > 0 && (
-                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-20 flex items-center justify-center">
+                <div className="absolute inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-20 flex items-center justify-center">
                   <div className="flex flex-col items-center gap-3">
-                    <div className="animate-spin rounded-full h-10 w-10 border-4 border-slate-200 border-t-slate-600"></div>
-                    <span className="text-sm font-medium text-slate-600">Loading...</span>
+                    <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-200 dark:border-gray-700 border-t-blue-600"></div>
+                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Loading...</span>
                   </div>
                 </div>
               )}
               <Table className="w-full" style={{ tableLayout: 'fixed' }}>
                 <TableHeader
-                  className="sticky top-0 z-20 bg-blue-600"
+                  className="sticky top-0 z-20 bg-blue-600 dark:bg-blue-700"
                   style={{ position: 'sticky' }}
                 >
                   {table.getHeaderGroups().map((headerGroup) => (
@@ -405,7 +405,7 @@ export const BaseTable = <
                           <TableHead
                             key={header.id}
                             className={cn(
-                              "bg-blue-600 text-white font-semibold border-r last:border-r-0 h-12 px-4 text-center"
+                              "bg-blue-600 dark:bg-blue-700 text-white font-semibold border-r last:border-r-0 h-12 px-4 text-center"
                             )}
                             style={{
                               width: finalWidth,
@@ -429,16 +429,16 @@ export const BaseTable = <
                     </TableRow>
                   ))}
                 </TableHeader>
-                <TableBody className="bg-white" ref={tbody}>
+                <TableBody className="bg-white dark:bg-gray-900" ref={tbody}>
                   {table.getRowModel().rows?.length ? (
                     <Fragment>
                       {table.getRowModel().rows.map((row) => (
                         <Fragment key={row.id}>
                           <TableRow
                             className={cn(
-                              "border-b border-slate-200 hover:bg-slate-50 transition-colors",
+                              "border-b border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
                               opt.renderExpansion && "cursor-pointer",
-                              row.getIsExpanded() && "bg-slate-50"
+                              row.getIsExpanded() && "bg-gray-50 dark:bg-gray-800"
                             )}
                             onClick={() => {
                               if (opt.renderExpansion) {
@@ -473,7 +473,7 @@ export const BaseTable = <
                                 <TableCell
                                   key={cell.id}
                                   className={cn(
-                                    "py-3 px-4 border-r border-slate-200 last:border-r-0",
+                                    "py-3 px-4 border-r border-gray-200 dark:border-gray-800 last:border-r-0 text-gray-900 dark:text-gray-100",
                                     cellTextAlignClass,
                                     cell.column.id === "no" && "text-center",
                                     cell.column.id === "color" && "text-center"
@@ -488,7 +488,7 @@ export const BaseTable = <
                             })}
                           </TableRow>
                           {row.getIsExpanded() && opt.renderExpansion ? (
-                            <TableRow className="bg-slate-50/50 border-b border-slate-200">
+                            <TableRow className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800">
                               <TableCell
                                 className="p-0 border-l-4 border-l-blue-500"
                                 colSpan={table.getAllColumns().length}
@@ -506,12 +506,12 @@ export const BaseTable = <
                     <TableRow>
                       <TableCell
                         colSpan={visibleColumns.length}
-                        className="h-24 text-center text-slate-500 whitespace-normal"
+                        className="h-24 text-center text-gray-500 dark:text-gray-400 whitespace-normal"
                         style={{ minWidth: 'auto' }}
                       >
                         {opt.isLoading ? (
                           <div className="flex flex-col items-center justify-center gap-3">
-                            <div className="animate-spin rounded-full h-8 w-8 border-4 border-slate-200 border-t-slate-600"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 dark:border-gray-700 border-t-blue-600"></div>
                             <span className="text-sm font-medium">Loading data...</span>
                           </div>
                         ) : (
@@ -524,7 +524,7 @@ export const BaseTable = <
               </Table>
             </div>
             {opt.pagination?.enabled && (
-              <div className="flex-shrink-0 bg-white border-t border-slate-200">
+              <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
                 <Pagination
                   pageIndex={table.getState().pagination.pageIndex}
                   pageCount={table.getPageCount()}

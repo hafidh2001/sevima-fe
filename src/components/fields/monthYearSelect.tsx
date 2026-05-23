@@ -144,13 +144,13 @@ export const MonthYearSelect = forwardRef<HTMLDivElement, Props>(({
   );
 
   const inputClassName = useMemo(() => cn(
-    "pr-10 rounded-md h-10 bg-white border-input focus:border-2 focus:border-primary outline-none hover:border-gray-400 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200",
-    openPopover && !isDisabled && "border-2 border-primary",
-    errorMessage && "border-red-500"
+    "pr-10 rounded-md h-10 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 focus:border-2 focus:border-blue-500 dark:focus:border-blue-400 outline-none hover:border-gray-400 dark:hover:border-gray-500 disabled:bg-gray-100 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-500 disabled:border-gray-200 dark:disabled:border-gray-600 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500",
+    openPopover && !isDisabled && "border-2 border-blue-500 dark:border-blue-400",
+    errorMessage && "border-red-500 dark:border-red-400"
   ), [openPopover, isDisabled, errorMessage]);
 
   const clearIconClassName = useMemo(() => cn(
-    "h-[15px] w-[15px] text-gray-400 cursor-pointer",
+    "h-[15px] w-[15px] text-gray-400 dark:text-gray-500 cursor-pointer",
     !selectedDate && "hidden"
   ), [selectedDate]);
 
@@ -173,9 +173,9 @@ export const MonthYearSelect = forwardRef<HTMLDivElement, Props>(({
   return (
     <div className={cn("flex flex-col gap-1", containerClassName)} ref={ref}>
       {label && (
-        <label className={cn("text-sm font-medium text-gray-700", labelClassName)}>
+        <label className={cn("text-sm font-medium text-gray-700 dark:text-gray-300", labelClassName)}>
           {label}
-          {required && <span className="text-red-600 ml-1">*</span>}
+          {required && <span className="text-red-600 dark:text-red-400 ml-1">*</span>}
         </label>
       )}
       <Popover
@@ -199,15 +199,15 @@ export const MonthYearSelect = forwardRef<HTMLDivElement, Props>(({
                 className={clearIconClassName}
                 onClick={handleClearClick}
               />
-              <CalendarDays className="h-[18px] w-[18px] text-gray-600" />
+              <CalendarDays className="h-[18px] w-[18px] text-gray-600 dark:text-gray-400" />
             </div>
           </div>
         </PopoverTrigger>
         {errorMessage && (
-          <p className="mt-0.5 text-sm text-red-500">{errorMessage}</p>
+          <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
         )}
         <PopoverContent
-          className="w-auto p-3 bg-white flex items-center gap-2"
+          className="w-auto p-3 bg-white dark:bg-gray-800 flex items-center gap-2 border border-gray-200 dark:border-gray-700"
           align="start"
         >
           <Select {...monthSelectProps} />

@@ -23,22 +23,22 @@ function WorkflowCard({ workflow }: { workflow: WorkflowResponse }) {
   const getStatusColor = (status: WorkflowStatusEnum) => {
     switch (status) {
       case WorkflowStatusEnum.ACTIVE:
-        return "bg-green-100 text-green-700";
+        return "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300";
       case WorkflowStatusEnum.DRAFT:
-        return "bg-yellow-100 text-yellow-700";
+        return "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-300";
       case WorkflowStatusEnum.ARCHIVED:
-        return "bg-gray-100 text-gray-700";
+        return "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300";
       default:
-        return "bg-gray-100 text-gray-700";
+        return "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300";
     }
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-gray-900 truncate">
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
               {workflow.name}
             </h3>
             <span
@@ -50,11 +50,11 @@ function WorkflowCard({ workflow }: { workflow: WorkflowResponse }) {
             </span>
           </div>
           {workflow.description && (
-            <p className="text-sm text-gray-500 line-clamp-2 mb-3">
+            <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2 mb-3">
               {workflow.description}
             </p>
           )}
-          <div className="flex items-center gap-4 text-xs text-gray-400">
+          <div className="flex items-center gap-4 text-xs text-gray-400 dark:text-gray-500">
             <span>{workflow._count.runs} runs</span>
             <span>•</span>
             <span>v{workflow.latestVersion?.version || 0}</span>
@@ -70,14 +70,14 @@ function WorkflowCard({ workflow }: { workflow: WorkflowResponse }) {
         <div className="flex items-center gap-1 ml-3">
           <Link
             to={ROUTES.workflowDetail.replace(":id", String(workflow.id))}
-            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            className="p-2 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
             title="View"
           >
             <GitBranch className="h-4 w-4" />
           </Link>
           <Link
             to={ROUTES.workflowEdit.replace(":id", String(workflow.id))}
-            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            className="p-2 text-gray-400 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
             title="Edit"
           >
             <Pencil className="h-4 w-4" />
@@ -119,17 +119,17 @@ export default function DashboardPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           Welcome back, {user?.name || "User"}
         </h1>
-        <p className="text-gray-500 mt-1">
+        <p className="text-gray-500 dark:text-gray-400 mt-1">
           Multi-Tenant Workflow Orchestration Engine
         </p>
       </div>
 
       {/* Global Health Panel */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
           Health Overview
         </h2>
         <GlobalHealthPanel />
@@ -138,12 +138,12 @@ export default function DashboardPage() {
       {/* Recent Workflows */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-800">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             Recent Workflows
           </h2>
           <Link
             to={ROUTES.workflowList}
-            className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
           >
             View all
             <ArrowRight className="h-4 w-4" />
@@ -151,8 +151,8 @@ export default function DashboardPage() {
         </div>
 
         {isLoadingWorkflows ? (
-          <div className="flex items-center justify-center py-12 bg-white rounded-xl border border-gray-200">
-            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+          <div className="flex items-center justify-center py-12 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800">
+            <Loader2 className="h-6 w-6 animate-spin text-blue-600 dark:text-blue-400" />
           </div>
         ) : recentWorkflows.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -161,15 +161,15 @@ export default function DashboardPage() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
-            <Play className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600 font-medium">No workflows yet</p>
-            <p className="text-sm text-gray-400 mt-1 mb-4">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-8 text-center">
+            <Play className="h-12 w-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+            <p className="text-gray-600 dark:text-gray-300 font-medium">No workflows yet</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500 mt-1 mb-4">
               Create your first workflow to get started
             </p>
             <Link
               to={ROUTES.workflowCreate}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
             >
               <Play className="h-4 w-4" />
               Create Workflow

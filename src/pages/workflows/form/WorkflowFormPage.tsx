@@ -163,21 +163,21 @@ export const WorkflowFormPage = () => {
         variant="ghost"
         size="sm"
         onClick={() => navigate(ROUTES.workflowList)}
-        className="mb-4"
+        className="mb-4 text-gray-700 dark:text-gray-300"
       >
         <ArrowLeft className="h-4 w-4 mr-2" />
         Kembali
       </Button>
 
-      <h1 className="text-2xl font-bold text-gray-900">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
         {isEditMode ? "Edit Workflow" : "Buat Workflow"}
       </h1>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Basic Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Informasi Dasar</h3>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Informasi Dasar</h3>
             <Controller
               name="name"
               control={control}
@@ -208,8 +208,8 @@ export const WorkflowFormPage = () => {
 
           {/* Workflow Builder */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Definisi Workflow</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Definisi Workflow</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Tambahkan steps (nodes) dan koneksi (edges) untuk mendefinisikan alur workflow Anda.
             </p>
             <WorkflowBuilder
@@ -220,7 +220,7 @@ export const WorkflowFormPage = () => {
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             <Button
               type="button"
               variant="outline"

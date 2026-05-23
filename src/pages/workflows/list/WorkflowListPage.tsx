@@ -175,9 +175,9 @@ export const WorkflowListPage = () => {
         size: 250,
         cell: ({ row }) => (
           <div className="text-left">
-            <p className="font-medium text-gray-900">{row.original.name}</p>
+            <p className="font-medium text-gray-900 dark:text-gray-100">{row.original.name}</p>
             {row.original.description && (
-              <p className="text-sm text-gray-500 truncate max-w-xs">
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">
                 {row.original.description}
               </p>
             )}
@@ -190,12 +190,12 @@ export const WorkflowListPage = () => {
         size: 120,
         cell: ({ row }) => {
           const { status } = row.original;
-          let className = "bg-gray-100 text-gray-800 hover:bg-gray-100";
+          let className = "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600";
 
           if (status === "ARCHIVED") {
-            className = "bg-orange-100 text-orange-800 hover:bg-orange-100";
+            className = "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300 hover:bg-orange-100 dark:hover:bg-orange-900/40";
           } else if (status === "ACTIVE") {
-            className = "bg-green-100 text-green-800 hover:bg-green-100";
+            className = "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 hover:bg-green-100 dark:hover:bg-green-900/40";
           }
 
           return (
@@ -210,7 +210,7 @@ export const WorkflowListPage = () => {
         header: "Versi",
         size: 80,
         cell: ({ row }) => (
-          <span className="text-center block">
+          <span className="text-center block text-gray-900 dark:text-gray-100">
             v{row.original.latestVersion?.version || "-"}
           </span>
         ),
@@ -220,7 +220,7 @@ export const WorkflowListPage = () => {
         header: "Total Run",
         size: 100,
         cell: ({ row }) => (
-          <span className="text-center block">{row.original._count.runs}</span>
+          <span className="text-center block text-gray-900 dark:text-gray-100">{row.original._count.runs}</span>
         ),
       },
       {
@@ -228,7 +228,7 @@ export const WorkflowListPage = () => {
         header: "Dibuat Oleh",
         size: 180,
         cell: ({ row }) => (
-          <span className="text-left block">{row.original.createdBy.name}</span>
+          <span className="text-left block text-gray-900 dark:text-gray-100">{row.original.createdBy.name}</span>
         ),
       },
       {
@@ -236,7 +236,7 @@ export const WorkflowListPage = () => {
         header: "Tanggal Dibuat",
         size: 150,
         cell: ({ row }) => (
-          <span className="text-left block">
+          <span className="text-left block text-gray-900 dark:text-gray-100">
             {dayjs(row.original.createdAt).utc().format("DD MMM YYYY")}
           </span>
         ),
@@ -303,7 +303,7 @@ export const WorkflowListPage = () => {
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Workflows</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Workflows</h1>
         </div>
         {canEdit && (
           <Button

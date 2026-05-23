@@ -60,23 +60,23 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <Logo size="xl" />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2">
             FlowForge
           </h1>
-          <p className="text-gray-500 text-sm sm:text-base">
+          <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
             Buat Akun Baru
           </p>
         </div>
 
         {/* Register Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Name Field */}
             <Controller
@@ -87,7 +87,7 @@ export const RegisterPage = () => {
                   {...field}
                   label="Nama Lengkap"
                   placeholder="Masukkan nama lengkap"
-                  startIcon={<UserIcon className="h-5 w-5 text-gray-400" />}
+                  startIcon={<UserIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />}
                   errorMessage={errors.name?.message}
                   autoComplete="name"
                 />
@@ -104,7 +104,7 @@ export const RegisterPage = () => {
                   label="Email"
                   type="email"
                   placeholder="contoh@email.com"
-                  startIcon={<MailIcon className="h-5 w-5 text-gray-400" />}
+                  startIcon={<MailIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />}
                   errorMessage={errors.email?.message}
                   autoComplete="email"
                 />
@@ -113,7 +113,7 @@ export const RegisterPage = () => {
 
             {/* Tenant Select */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 Tenant
               </label>
               <Controller
@@ -143,7 +143,7 @@ export const RegisterPage = () => {
                   {...field}
                   label="Password"
                   placeholder="Minimal 6 karakter"
-                  startIcon={<LockIcon className="h-5 w-5 text-gray-400" />}
+                  startIcon={<LockIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />}
                   errorMessage={errors.password?.message}
                   autoComplete="new-password"
                 />
@@ -159,7 +159,7 @@ export const RegisterPage = () => {
                   {...field}
                   label="Konfirmasi Password"
                   placeholder="Masukkan password lagi"
-                  startIcon={<LockIcon className="h-5 w-5 text-gray-400" />}
+                  startIcon={<LockIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" />}
                   errorMessage={errors.confirmPassword?.message}
                   autoComplete="new-password"
                 />
@@ -180,12 +180,12 @@ export const RegisterPage = () => {
             </Button>
 
             {/* Login Link */}
-            <p className="text-center text-sm text-gray-500 mt-4">
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
               Sudah punya akun?{" "}
               <button
                 type="button"
                 onClick={() => navigate(ROUTES.login)}
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
               >
                 Masuk
               </button>
@@ -194,7 +194,7 @@ export const RegisterPage = () => {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs sm:text-sm text-gray-400 mt-6">
+        <p className="text-center text-xs sm:text-sm text-gray-400 dark:text-gray-500 mt-6">
           &copy; {new Date().getFullYear()} FlowForge. Hak cipta dilindungi.
         </p>
       </div>

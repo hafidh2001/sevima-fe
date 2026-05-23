@@ -202,32 +202,32 @@ function VersionCard({
   const edgeCount = version.definition?.edges?.length || 0;
 
   return (
-    <div className="border border-gray-200 rounded-lg bg-white overflow-hidden">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 overflow-hidden">
       <div
-        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50"
+        className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50"
         onClick={onToggle}
       >
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 font-semibold">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-semibold">
             v{version.version}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <p className="font-medium text-gray-900">
+              <p className="font-medium text-gray-900 dark:text-gray-100">
                 Version {version.version}
                 {isLatest && (
-                  <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
+                  <span className="ml-2 px-2 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs rounded-full">
                     Latest
                   </span>
                 )}
                 {version.version === currentVersion && (
-                  <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                  <span className="ml-2 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs rounded-full">
                     Current
                   </span>
                 )}
               </p>
             </div>
-            <div className="flex items-center gap-3 text-sm text-gray-500 mt-1">
+            <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mt-1">
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 {formatDistanceToNow(new Date(version.createdAt), {
@@ -243,19 +243,19 @@ function VersionCard({
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-gray-400 dark:text-gray-500">
             {nodeCount} steps • {edgeCount} connections
           </span>
           {isExpanded ? (
-            <ChevronDown className="h-5 w-5 text-gray-400" />
+            <ChevronDown className="h-5 w-5 text-gray-400 dark:text-gray-500" />
           ) : (
-            <ChevronRight className="h-5 w-5 text-gray-400" />
+            <ChevronRight className="h-5 w-5 text-gray-400 dark:text-gray-500" />
           )}
         </div>
       </div>
 
       {isExpanded && (
-        <div className="border-t border-gray-200 bg-gray-50 p-4">
+        <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 p-4">
           {isLoadingDefinition ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
@@ -264,10 +264,10 @@ function VersionCard({
             <>
               {/* DAG Preview */}
               {nodes.length > 0 ? (
-                <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <GitBranch className="h-4 w-4 text-gray-400" />
-                    <span className="text-sm font-medium text-gray-700">
+                    <GitBranch className="h-4 w-4 text-gray-400 dark:text-gray-500" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       DAG Preview (Read-only)
                     </span>
                   </div>
@@ -290,7 +290,7 @@ function VersionCard({
                   </div>
                 </div>
               ) : (
-                <div className="bg-white rounded-lg border border-gray-200 p-4 mb-4 text-center text-gray-500">
+                <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4 text-center text-gray-500 dark:text-gray-400">
                   No DAG definition for this version
                 </div>
               )}
@@ -400,7 +400,7 @@ export function VersionHistory({
   if (error) {
     return (
       <div className="text-center py-12">
-        <p className="text-red-600 mb-4">{error}</p>
+        <p className="text-red-600 dark:text-red-400 mb-4">{error}</p>
         <Button variant="outline" onClick={fetchVersions}>
           Try Again
         </Button>
@@ -410,8 +410,8 @@ export function VersionHistory({
 
   if (versions.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
-        <GitBranch className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+      <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+        <GitBranch className="h-12 w-12 mx-auto mb-4 text-gray-300 dark:text-gray-600" />
         <p>No version history available</p>
       </div>
     );
@@ -422,10 +422,10 @@ export function VersionHistory({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-gray-800">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
           Version History ({versions.length} versions)
         </h3>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
           <User className="h-4 w-4" />
           <span>Author information will be shown here</span>
         </div>

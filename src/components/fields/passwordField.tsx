@@ -37,8 +37,8 @@ export const PasswordField = forwardRef<HTMLInputElement, Props>(({
   }, [onChange]);
 
   const inputClassName = cn(
-    "bg-[#fff] rounded-md ring-0 shadow-2xs active:border-2 outline-none focus:border-2 focus:outline-none focus:border-primary focus:ring-0 focus:shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-none border-[#ccc] hover:border-[#999999]",
-    errorMessage && "border-red-500",
+    "bg-white dark:bg-gray-800 rounded-md ring-0 shadow-2xs active:border-2 outline-none focus:border-2 focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 focus:ring-0 focus:shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:shadow-none border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500",
+    errorMessage && "border-red-500 dark:border-red-400",
     (showToggle || endIcon) && "pr-10",
     startIcon && "pl-10"
   );
@@ -46,9 +46,9 @@ export const PasswordField = forwardRef<HTMLInputElement, Props>(({
   return (
     <div className={cn("flex flex-col gap-1", containerClassName)}>
       {label && (
-        <label className={cn("text-sm font-medium text-gray-700", labelClassName)}>
+        <label className={cn("text-sm font-medium text-gray-700 dark:text-gray-300", labelClassName)}>
           {label}
-          {required && <span className="text-red-600 ml-1">*</span>}
+          {required && <span className="text-red-600 dark:text-red-400 ml-1">*</span>}
         </label>
       )}
       <div className="relative">
@@ -74,12 +74,12 @@ export const PasswordField = forwardRef<HTMLInputElement, Props>(({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-600"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
           >
             {showPassword ? (
-              <EyeOffIcon className="h-4 w-4 text-gray-400" />
+              <EyeOffIcon className="h-4 w-4" />
             ) : (
-              <EyeIcon className="h-4 w-4 text-gray-400" />
+              <EyeIcon className="h-4 w-4" />
             )}
           </button>
         )}
@@ -90,7 +90,7 @@ export const PasswordField = forwardRef<HTMLInputElement, Props>(({
         )}
       </div>
       {errorMessage && (
-        <p className="text-sm text-red-600">{errorMessage}</p>
+        <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
       )}
     </div>
   );

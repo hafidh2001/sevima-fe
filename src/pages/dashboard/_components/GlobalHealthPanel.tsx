@@ -23,8 +23,6 @@ export function GlobalHealthPanel() {
     ? stats.byStatus.success + stats.byStatus.failed + stats.byStatus.cancelled
     : 0;
 
-  // Chart data for status distribution
-  // Using brand gradient colors: blue-500 (#3b82f6) to indigo-600 (#4f46e5)
   const statusChartData: ChartData<"bar", number[], string> | null = stats
     ? {
         labels: ["Success", "Failed", "Running", "Pending", "Timed Out", "Cancelled"],
@@ -38,14 +36,13 @@ export function GlobalHealthPanel() {
               stats.byStatus.timedOut,
               stats.byStatus.cancelled,
             ],
-            // Brand-aligned gradient colors (blue-indigo theme)
             backgroundColor: [
-              "rgba(34, 197, 94, 0.9)", // green - success
-              "rgba(239, 68, 68, 0.9)", // red - failed
-              "rgba(59, 130, 246, 0.9)", // blue - running (brand primary)
-              "rgba(245, 158, 11, 0.9)", // amber - pending
-              "rgba(79, 70, 229, 0.9)", // indigo - timed out (brand secondary)
-              "rgba(107, 114, 128, 0.9)", // gray - cancelled
+              "rgba(34, 197, 94, 0.9)",
+              "rgba(239, 68, 68, 0.9)",
+              "rgba(59, 130, 246, 0.9)",
+              "rgba(245, 158, 11, 0.9)",
+              "rgba(79, 70, 229, 0.9)",
+              "rgba(107, 114, 128, 0.9)",
             ],
             borderRadius: 8,
             borderSkipped: false,
@@ -56,10 +53,10 @@ export function GlobalHealthPanel() {
 
   if (isLoading && !stats) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-8">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-8">
         <div className="flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <span className="ml-3 text-gray-500">Memuat statistik...</span>
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
+          <span className="ml-3 text-gray-500 dark:text-gray-400">Memuat statistik...</span>
         </div>
       </div>
     );
@@ -67,14 +64,14 @@ export function GlobalHealthPanel() {
 
   if (error && !stats) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-8">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-8">
         <div className="flex flex-col items-center justify-center text-center">
-          <AlertTriangle className="h-8 w-8 text-red-500 mb-3" />
-          <p className="text-red-600 font-medium">Gagal memuat statistik</p>
-          <p className="text-sm text-gray-500 mt-1">{error instanceof Error ? error.message : String(error)}</p>
+          <AlertTriangle className="h-8 w-8 text-red-500 dark:text-red-400 mb-3" />
+          <p className="text-red-600 dark:text-red-400 font-medium">Gagal memuat statistik</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{error instanceof Error ? error.message : String(error)}</p>
           <button
             onClick={() => refetch()}
-            className="mt-4 flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="mt-4 flex items-center gap-2 px-4 py-2 bg-blue-600 dark:bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
           >
             <RefreshCw className="h-4 w-4" />
             Coba lagi
@@ -86,11 +83,11 @@ export function GlobalHealthPanel() {
 
   if (!stats || stats.total === 0) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-8">
+      <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-8">
         <div className="flex flex-col items-center justify-center text-center">
-          <Activity className="h-12 w-12 text-gray-300 mb-4" />
-          <p className="text-gray-600 font-medium">No runs in the last 24 hours</p>
-          <p className="text-sm text-gray-400 mt-1">
+          <Activity className="h-12 w-12 text-gray-300 dark:text-gray-600 mb-4" />
+          <p className="text-gray-600 dark:text-gray-300 font-medium">No runs in the last 24 hours</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
             Jalankan workflow untuk melihat statistik
           </p>
         </div>
@@ -101,7 +98,6 @@ export function GlobalHealthPanel() {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Active Runs */}
         <StatCard
           title="Active Runs"
           value={activeRuns}
@@ -110,7 +106,6 @@ export function GlobalHealthPanel() {
           subtitle={`${stats.byStatus.pending} pending, ${stats.byStatus.running} running`}
         />
 
-        {/* Success Rate */}
         <StatCard
           title="Success Rate"
           value={`${stats.successRate.toFixed(1)}%`}
@@ -119,7 +114,6 @@ export function GlobalHealthPanel() {
           subtitle={`${stats.byStatus.success} of ${totalCompleted} completed`}
         />
 
-        {/* Failure Rate */}
         <StatCard
           title="Failure Rate"
           value={`${stats.failureRate.toFixed(1)}%`}
@@ -128,7 +122,6 @@ export function GlobalHealthPanel() {
           subtitle={`${stats.byStatus.failed} failed, ${stats.byStatus.timedOut} timed out`}
         />
 
-        {/* Average Duration */}
         <StatCard
           title="Avg. Duration"
           value={formatDuration(stats.averageDurationMs)}
@@ -138,10 +131,9 @@ export function GlobalHealthPanel() {
         />
       </div>
 
-      {/* Status Distribution Chart */}
       {statusChartData && (
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">
             Run Status Distribution
           </h3>
           <div className="h-64">
@@ -169,22 +161,25 @@ export function GlobalHealthPanel() {
                   y: {
                     beginAtZero: true,
                     grid: {
-                      color: "rgba(0, 0, 0, 0.05)",
+                      color: "rgba(255, 255, 255, 0.1)",
                     },
                     ticks: {
                       stepSize: 1,
+                      color: "rgb(156, 163, 175)",
                     },
                   },
                   x: {
                     grid: {
                       display: false,
                     },
+                    ticks: {
+                      color: "rgb(156, 163, 175)",
+                    },
                   },
                 },
               }}
             />
           </div>
-          {/* Legend */}
           <div className="flex flex-wrap justify-center gap-4 mt-4">
             {[
               { label: "Success", color: "rgba(34, 197, 94, 0.8)" },
@@ -199,16 +194,15 @@ export function GlobalHealthPanel() {
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: item.color }}
                 />
-                <span className="text-xs text-gray-600">{item.label}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">{item.label}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Last Updated */}
       {lastUpdated && (
-        <div className="flex items-center justify-end text-xs text-gray-400">
+        <div className="flex items-center justify-end text-xs text-gray-400 dark:text-gray-500">
           <RefreshCw className="h-3 w-3 mr-1" />
           Updated {lastUpdated.toLocaleTimeString()}
         </div>

@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/authStore";
 import { ConfirmationModal } from "@/components/confirmationModal";
 import { MenuIcon, XIcon, LogOutIcon } from "lucide-react";
 import { Logo } from "@/components/ui/logo";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { navItems } from "@/data/sidebar";
 
 export const Sidebar = () => {
@@ -37,28 +38,28 @@ export const Sidebar = () => {
     `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
       isActive
         ? "bg-blue-600 text-white"
-        : "text-gray-800 hover:bg-gray-100"
+        : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
     }`;
 
   return (
     <>
       {/* Mobile Header - Visible only on mobile, acts as header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 z-40 shadow-sm">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4 z-40 shadow-sm">
         <Logo size="sm" />
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
         >
           {isMobileMenuOpen ? (
-            <XIcon className="w-6 h-6 text-gray-600" />
+            <XIcon className="w-6 h-6 text-gray-600 dark:text-gray-300" />
           ) : (
-            <MenuIcon className="w-6 h-6 text-gray-600" />
+            <MenuIcon className="w-6 h-6 text-gray-600 dark:text-gray-300" />
           )}
         </button>
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:w-64 lg:h-screen lg:bg-white lg:border-r lg:border-gray-100 lg:flex-col lg:px-4 lg:py-6 lg:gap-1 lg:sticky lg:top-0">
+      <aside className="hidden lg:flex lg:w-64 lg:h-screen lg:bg-white lg:dark:bg-gray-900 lg:border-r lg:dark:border-gray-800 lg:flex-col lg:px-4 lg:py-6 lg:gap-1 lg:sticky lg:top-0">
         {/* Logo */}
         <div className="flex items-center justify-center px-2 mb-7">
           <Logo size="md" />
@@ -87,17 +88,20 @@ export const Sidebar = () => {
 
         {/* User Info & Logout - Always at bottom */}
         <div className="mt-auto">
-          <div className="border-y border-gray-200 pt-4 pb-2">
+          <div className="border-y border-gray-200 dark:border-gray-800 pt-4 pb-2">
             <div className="px-3 py-2">
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                 {user?.name || "User"}
               </p>
-              <p className="text-xs text-gray-500 truncate">{user?.email || "-"}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email || "-"}</p>
             </div>
+          </div>
+          <div className="pt-2 pb-1">
+            <ThemeToggle />
           </div>
           <button
             onClick={() => setShowLogoutModal(true)}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-800 hover:bg-gray-100 transition-colors w-full"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors w-full"
           >
             <LogOutIcon size={18} />
             <span>Logout</span>
@@ -115,7 +119,7 @@ export const Sidebar = () => {
           />
 
           {/* Menu */}
-          <aside className="relative w-72 h-[calc(100vh-4rem)] bg-white overflow-y-auto flex flex-col">
+          <aside className="relative w-72 h-[calc(100vh-4rem)] bg-white dark:bg-gray-900 overflow-y-auto flex flex-col">
             <nav className="flex flex-col gap-1 p-4">
               {filteredNavItems.map((item) => {
                 const isWorkflow = item.to?.includes("/workflows");
@@ -137,17 +141,20 @@ export const Sidebar = () => {
               })}
             </nav>
 
-            <div className="mt-auto border-y border-gray-200">
+            <div className="mt-auto border-y border-gray-200 dark:border-gray-800">
               <div className="px-4 py-3">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                   {user?.name || "User"}
                 </p>
-                <p className="text-xs text-gray-500 truncate">{user?.email || "-"}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user?.email || "-"}</p>
               </div>
               <div className="p-4 pt-2">
+                <ThemeToggle />
+              </div>
+              <div className="p-4 pt-0">
                 <button
                   onClick={() => setShowLogoutModal(true)}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-800 hover:bg-gray-100 transition-colors w-full"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors w-full"
                 >
                   <LogOutIcon size={18} />
                   <span>Logout</span>
