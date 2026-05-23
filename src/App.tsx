@@ -7,7 +7,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { GuestRoute } from "@/components/auth/GuestRoute";
 import { RoleEnum } from "@/types";
 import { useAuthStore } from "@/store/authStore";
-import { LoginPage, RegisterPage, DashboardPage, WorkflowListPage, WorkflowFormPage, WorkflowDetailPage } from "./pages";
+import { LoginPage, RegisterPage, DashboardPage, WorkflowListPage, WorkflowFormPage, WorkflowDetailPage, AIWorkflowBuilderPage } from "./pages";
 import { queryClient } from "@/configs/queryClient";
 
 function App() {
@@ -120,6 +120,19 @@ function App() {
             >
               <AdminLayout>
                 <WorkflowDetailPage />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path={ROUTES.aiBuilder}
+          element={
+            <ProtectedRoute
+              allowedRoles={[RoleEnum.ADMIN, RoleEnum.EDITOR]}
+            >
+              <AdminLayout>
+                <AIWorkflowBuilderPage />
               </AdminLayout>
             </ProtectedRoute>
           }

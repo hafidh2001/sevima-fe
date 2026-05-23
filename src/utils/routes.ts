@@ -42,4 +42,8 @@ export class ROUTES {
   static get workflowDetail() {
     return `/workflows/detail/:id` as const;
   }
+
+  static get aiBuilder() {
+    return `/ai-builder` as const;
+  }
 }
