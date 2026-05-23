@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { workflowRunApi } from "@/services/workflowRunApi";
 import { GlobalRunStats } from "@/types/workflow";
+import { BarChart } from "@/components/chart/barChart";
+import type { ChartData } from "chart.js";
 import {
   Activity,
   CheckCircle,
@@ -95,6 +97,37 @@ export function GlobalHealthPanel({ refreshInterval = 30000 }: GlobalHealthPanel
     ? stats.byStatus.success + stats.byStatus.failed + stats.byStatus.cancelled
     : 0;
 
+  // Chart data for status distribution
+  // Using brand gradient colors: blue-500 (#3b82f6) to indigo-600 (#4f46e5)
+  const statusChartData: ChartData<"bar", number[], string> | null = stats
+    ? {
+        labels: ["Success", "Failed", "Running", "Pending", "Timed Out", "Cancelled"],
+        datasets: [
+          {
+            data: [
+              stats.byStatus.success,
+              stats.byStatus.failed,
+              stats.byStatus.running,
+              stats.byStatus.pending,
+              stats.byStatus.timedOut,
+              stats.byStatus.cancelled,
+            ],
+            // Brand-aligned gradient colors (blue-indigo theme)
+            backgroundColor: [
+              "rgba(34, 197, 94, 0.9)", // green - success
+              "rgba(239, 68, 68, 0.9)", // red - failed
+              "rgba(59, 130, 246, 0.9)", // blue - running (brand primary)
+              "rgba(245, 158, 11, 0.9)", // amber - pending
+              "rgba(79, 70, 229, 0.9)", // indigo - timed out (brand secondary)
+              "rgba(107, 114, 128, 0.9)", // gray - cancelled
+            ],
+            borderRadius: 8,
+            borderSkipped: false,
+          },
+        ],
+      }
+    : null;
+
   if (isLoading && !stats) {
     return (
       <div className="bg-white rounded-xl border border-gray-200 p-8">
@@ -178,6 +211,74 @@ export function GlobalHealthPanel({ refreshInterval = 30000 }: GlobalHealthPanel
           subtitle="Average execution time"
         />
       </div>
+
+      {/* Status Distribution Chart */}
+      {statusChartData && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 className="text-sm font-semibold text-gray-700 mb-4">
+            Run Status Distribution
+          </h3>
+          <div className="h-64">
+            <BarChart
+              data={statusChartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: (context) => {
+                        const value = context.raw as number;
+                        const total = stats.total;
+                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                        return `${context.label}: ${value} (${percentage}%)`;
+                      },
+                    },
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    grid: {
+                      color: "rgba(0, 0, 0, 0.05)",
+                    },
+                    ticks: {
+                      stepSize: 1,
+                    },
+                  },
+                  x: {
+                    grid: {
+                      display: false,
+                    },
+                  },
+                },
+              }}
+            />
+          </div>
+          {/* Legend */}
+          <div className="flex flex-wrap justify-center gap-4 mt-4">
+            {[
+              { label: "Success", color: "rgba(34, 197, 94, 0.8)" },
+              { label: "Failed", color: "rgba(239, 68, 68, 0.8)" },
+              { label: "Running", color: "rgba(59, 130, 246, 0.8)" },
+              { label: "Pending", color: "rgba(245, 158, 11, 0.8)" },
+              { label: "Timed Out", color: "rgba(139, 92, 246, 0.8)" },
+              { label: "Cancelled", color: "rgba(107, 114, 128, 0.8)" },
+            ].map((item) => (
+              <div key={item.label} className="flex items-center gap-2">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="text-xs text-gray-600">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Last Updated */}
       {lastUpdated && (

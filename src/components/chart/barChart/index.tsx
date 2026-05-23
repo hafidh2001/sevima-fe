@@ -1,6 +1,8 @@
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
   BarElement,
   Title,
   Tooltip,
@@ -17,7 +19,7 @@ import "chartjs-plugin-zoom";
 import type { _DeepPartialObject } from "../../../../node_modules/chart.js/dist/types/utils";
 import type { CSSProperties, FC } from "react";
 
-ChartJS.register(BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 ChartJS.defaults.font.family = "Plus Jakarta Sans";
 ChartJS.defaults.color = "#000";
