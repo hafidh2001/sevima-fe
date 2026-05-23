@@ -7,3 +7,4 @@ export const RegisterPage = lazyLoad(() => import('./auth/register/RegisterPage'
 // Workflow Pages
 export const WorkflowListPage = lazyLoad(() => import('./workflows/list/WorkflowListPage'));
 export const WorkflowFormPage = lazyLoad(() => import('./workflows/form/WorkflowFormPage'));
+export const WorkflowDetailPage = lazyLoad(() => import('./workflows/detail/WorkflowDetailPage'));

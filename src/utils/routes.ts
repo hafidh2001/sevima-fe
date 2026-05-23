@@ -33,4 +33,8 @@ export class ROUTES {
   static get workflowEdit() {
     return `/workflows/edit/:id` as const;
   }
+
+  static get workflowDetail() {
+    return `/workflows/detail/:id` as const;
+  }
 }

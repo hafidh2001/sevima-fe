@@ -42,7 +42,7 @@ export const Sidebar = () => {
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:w-64 lg:h-screen lg:bg-white lg:border-r lg:border-gray-100 lg:flex-col lg:px-4 lg:py-6 lg:gap-1">
+      <aside className="hidden lg:flex lg:w-64 lg:h-screen lg:bg-white lg:border-r lg:border-gray-100 lg:flex-col lg:px-4 lg:py-6 lg:gap-1 lg:sticky lg:top-0">
         {/* Logo */}
         <div className="flex items-center justify-center px-2 mb-7">
           <Logo size="md" />
@@ -137,8 +137,8 @@ export const Sidebar = () => {
         description="Apakah Anda yakin ingin keluar dari aplikasi?"
         onConfirm={handleLogout}
         onCancel={() => setShowLogoutModal(false)}
-        confirmText="Keluar"
-        cancelText="Batal"
+        confirmText="Logout"
+        cancelText="Cancel"
         confirmVariant="destructive"
         cancelVariant="outline"
       />

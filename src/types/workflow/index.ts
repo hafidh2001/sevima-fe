@@ -15,6 +15,7 @@ export interface WorkflowResponse {
   latestVersion: {
     id: number;
     version: number;
+    definition: WorkflowDefinition;
     createdAt: string;
   } | null;
   versionCount: number;
@@ -43,4 +44,35 @@ export interface WorkflowQueryParams {
   name?: string;
   from?: string;
   to?: string;
+}
+
+// Workflow Definition Types
+export interface WorkflowNode {
+  id: string;
+  type: string;
+  name: string;
+  config?: Record<string, unknown>;
+}
+
+export interface WorkflowEdge {
+  from: string;
+  to: string;
+}
+
+export interface WorkflowDefinition {
+  nodes: WorkflowNode[];
+  edges: WorkflowEdge[];
+}
+
+// API Request/Response Types
+export interface CreateWorkflowPayload {
+  name: string;
+  description?: string;
+  definition: WorkflowDefinition;
+}
+
+export interface UpdateWorkflowPayload {
+  name?: string;
+  description?: string;
+  definition?: WorkflowDefinition;
 }

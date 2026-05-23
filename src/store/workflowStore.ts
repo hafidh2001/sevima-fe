@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { workflowApi } from "@/services/workflowApi";
 import type { WorkflowStore, WorkflowData } from "@/types/workflow/store";
+import type { CreateWorkflowPayload, UpdateWorkflowPayload } from "@/types/workflow";
 import { DEFAULT_PAGE_SIZE } from "@/constants/table";
 import { WorkflowStatusEnum } from "@/types";
 
@@ -88,6 +89,47 @@ export const useWorkflowStore = create<WorkflowStore>((set) => ({
           error instanceof Error ? error.message : "Failed to load workflow detail",
         isLoading: false,
       });
+    }
+  },
+
+  createWorkflow: async (payload: CreateWorkflowPayload) => {
+    set({ isLoading: true, error: null, success: null });
+
+    try {
+      const response = await workflowApi.create(payload);
+      set({ selectedWorkflow: response, isLoading: false, success: "Workflow berhasil dibuat" });
+      return response;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Gagal membuat workflow";
+      set({ error: message, isLoading: false });
+      throw error;
+    }
+  },
+
+  updateWorkflow: async (id: number, payload: UpdateWorkflowPayload) => {
+    set({ isLoading: true, error: null, success: null });
+
+    try {
+      const response = await workflowApi.update(id, payload);
+      set({ selectedWorkflow: response, isLoading: false, success: "Workflow berhasil diperbarui" });
+      return response;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Gagal memperbarui workflow";
+      set({ error: message, isLoading: false });
+      throw error;
+    }
+  },
+
+  deleteWorkflow: async (id: number) => {
+    set({ isLoading: true, error: null, success: null });
+
+    try {
+      await workflowApi.delete(id);
+      set({ isLoading: false, success: "Workflow berhasil dihapus" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Gagal menghapus workflow";
+      set({ error: message, isLoading: false });
+      throw error;
     }
   },
 

@@ -1,17 +1,20 @@
-import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useMemo, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ColumnDef } from "@tanstack/react-table";
-import { SearchIcon, PlusIcon } from "lucide-react";
+import { SearchIcon, PlusIcon, Eye, Pencil, Trash } from "lucide-react";
 import { BaseTable } from "@/components/basetable/BaseTable";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SingleSelect } from "@/components/fields/singleSelect";
 import { InputField } from "@/components/fields/inputField";
 import { CalendarSelect } from "@/components/fields/calendarSelect";
+import { ConfirmationModal } from "@/components/confirmationModal";
 import { useWorkflowStore } from "@/store/workflowStore";
 import { useMasterStore } from "@/store/masterStore";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { showToast } from "@/utils/toast";
 import { DEFAULT_PAGE_SIZE } from "@/constants/table";
+import { ROUTES } from "@/utils/routes";
 import { BasicSelectOpt } from "@/types";
 import { WorkflowResponse } from "@/types/workflow";
 import dayjs from "dayjs";
@@ -20,13 +23,24 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 
 export const WorkflowListPage = () => {
-  const { workflowData, isLoading, loadWorkflowList } = useWorkflowStore();
+  const navigate = useNavigate();
+  const {
+    workflowData,
+    isLoading,
+    loadWorkflowList,
+    deleteWorkflow,
+    success,
+    error,
+  } = useWorkflowStore();
 
   const {
     workflowStatusOptions,
-    isLoadingWorkflowStatusOptions,
     fetchWorkflowStatusOptions,
   } = useMasterStore();
+
+  // Delete modal state
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchWorkflowStatusOptions();
@@ -57,8 +71,8 @@ export const WorkflowListPage = () => {
       const params: Record<string, unknown> = {
         page,
         limit,
-        name : debouncedSearch ?? undefined,
-        status : filters.status ?? undefined,
+        name: debouncedSearch ?? undefined,
+        status: filters.status ?? undefined,
         from: filters.from ?? undefined,
         to: filters.to ?? undefined,
       };
@@ -69,11 +83,34 @@ export const WorkflowListPage = () => {
         error instanceof Error ? error.message : "Gagal memuat workflow";
       showToast(message, "error");
     }
-  }, [page, limit, debouncedSearch, filters.status, filters.from, filters.to, loadWorkflowList]);
+  }, [
+    page,
+    limit,
+    debouncedSearch,
+    filters.status,
+    filters.from,
+    filters.to,
+    loadWorkflowList,
+  ]);
 
   useEffect(() => {
     fetchWorkflows();
   }, [fetchWorkflows]);
+
+  // Handle delete success/error
+  useEffect(() => {
+    if (success && deleteId !== null) {
+      showToast(success, "success");
+      setDeleteId(null);
+      setIsDeleting(false);
+      fetchWorkflows();
+    }
+    if (error && deleteId !== null) {
+      showToast(error, "error");
+      setDeleteId(null);
+      setIsDeleting(false);
+    }
+  }, [success, error, deleteId, fetchWorkflows]);
 
   const handleSearchChange = useCallback(
     (value: string) => {
@@ -113,6 +150,12 @@ export const WorkflowListPage = () => {
     },
     [page, setLimit, setPage],
   );
+
+  const handleDelete = useCallback(async () => {
+    if (deleteId === null) return;
+    setIsDeleting(true);
+    await deleteWorkflow(deleteId);
+  }, [deleteId, deleteWorkflow]);
 
   const selectedWorkflowStatus = useMemo(() => {
     return (
@@ -194,8 +237,58 @@ export const WorkflowListPage = () => {
           </span>
         ),
       },
+      {
+        id: "actions",
+        header: "Aksi",
+        size: 140,
+        cell: ({ row: { original } }) => {
+          const handleView = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            navigate(ROUTES.workflowDetail.replace(":id", String(original.id)));
+          };
+
+          const handleEdit = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            navigate(ROUTES.workflowEdit.replace(":id", String(original.id)));
+          };
+
+          const handleDeleteClick = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            setDeleteId(original.id);
+          };
+
+          return (
+            <div className="flex items-center justify-center gap-1 p-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleView}
+                className="h-8 w-8 bg-blue-600 text-white hover:bg-blue-700"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleEdit}
+                className="h-8 w-8 bg-yellow-500 text-white hover:bg-yellow-600"
+              >
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleDeleteClick}
+                className="h-8 w-8 bg-red-600 text-white hover:bg-red-700"
+              >
+                <Trash className="h-4 w-4" />
+              </Button>
+            </div>
+          );
+        },
+      },
     ],
-    [],
+    [navigate],
   );
 
   return (
@@ -204,7 +297,10 @@ export const WorkflowListPage = () => {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Workflows</h1>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          className="bg-blue-600 hover:bg-blue-700"
+          onClick={() => navigate(ROUTES.workflowCreate)}
+        >
           <PlusIcon className="h-4 w-4 mr-2" />
           Buat Workflow
         </Button>
@@ -222,7 +318,6 @@ export const WorkflowListPage = () => {
           value={selectedWorkflowStatus}
           onChange={handleStatusChange}
           options={workflowStatusOptions}
-          isLoading={isLoadingWorkflowStatusOptions}
           placeholder="Status"
           isSearchable={true}
           isClearable={true}
@@ -268,6 +363,22 @@ export const WorkflowListPage = () => {
           noDataText="Tidak ada workflow yang ditemukan"
         />
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmationModal
+        isShown={deleteId !== null}
+        toggle={(open) => {
+          if (open === false) setDeleteId(null);
+        }}
+        title="Hapus Workflow"
+        description="Apakah Anda yakin ingin menghapus workflow ini? Data yang dihapus tidak dapat dikembalikan."
+        onConfirm={handleDelete}
+        confirmText="Hapus"
+        cancelText="Batal"
+        confirmVariant="destructive"
+        cancelVariant="outline"
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

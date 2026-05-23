@@ -6,13 +6,14 @@ export interface MasterState {
   tenantOptions: BasicSelectOpt<number>[];
   isLoadingTenantOptions: boolean;
   workflowStatusOptions: BasicSelectOpt<string>[];
-  isLoadingWorkflowStatusOptions: boolean;
+  nodeTypeOptions: BasicSelectOpt<string>[];
   error: Nullable<string>;
 }
 
 export interface MasterActions {
   fetchTenantOptions: () => Promise<void>;
   fetchWorkflowStatusOptions: () => void;
+  fetchNodeTypeOptions: () => void;
   reset: () => void;
 }
 

@@ -37,3 +37,12 @@ export enum WorkflowStatusEnum {
   DRAFT = "DRAFT",
   ARCHIVED = "ARCHIVED",
 }
+
+export enum NodeTypeEnum {
+  START = "START",
+  END = "END",
+  HTTP_CALL = "HTTP_CALL",
+  CONDITION = "CONDITION",
+  DELAY = "DELAY",
+  SCRIPT = "SCRIPT",
+}

@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { masterApi } from "@/services/masterApi";
 import type { MasterStore } from "@/types/master/store";
-import { BasicSelectOpt, WorkflowStatusEnum } from "@/types";
+import { BasicSelectOpt, WorkflowStatusEnum, NodeTypeEnum } from "@/types";
 
 const initialState = {
   tenantOptions: [] as BasicSelectOpt<number>[],
   isLoadingTenantOptions: false,
   workflowStatusOptions: [] as BasicSelectOpt<string>[],
-  isLoadingWorkflowStatusOptions: false,
+  nodeTypeOptions: [] as BasicSelectOpt<string>[],
   error: null as string | null,
 };
 
@@ -30,7 +30,6 @@ export const useMasterStore = create<MasterStore>((set) => ({
     }
   },
   fetchWorkflowStatusOptions: () => {
-    set({ isLoadingWorkflowStatusOptions: true, error: null });
     const options: BasicSelectOpt<string>[] = Object.entries(
       WorkflowStatusEnum,
     ).map(([key, value]) => ({
@@ -39,8 +38,16 @@ export const useMasterStore = create<MasterStore>((set) => ({
     }));
     set({
       workflowStatusOptions: options,
-      isLoadingWorkflowStatusOptions: false,
     });
+  },
+  fetchNodeTypeOptions: () => {
+    const options: BasicSelectOpt<string>[] = Object.entries(NodeTypeEnum).map(
+      ([key, value]) => ({
+        label: key.replace(/_/g, " "),
+        value,
+      }),
+    );
+    set({ nodeTypeOptions: options });
   },
 
   reset: () => {
