@@ -25,4 +25,12 @@ export class ROUTES {
   static get workflowList() {
     return `/workflows/list` as const;
   }
+
+  static get workflowCreate() {
+    return `/workflows/create` as const;
+  }
+
+  static get workflowEdit() {
+    return `/workflows/edit/:id` as const;
+  }
 }
