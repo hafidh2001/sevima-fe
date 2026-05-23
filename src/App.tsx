@@ -8,7 +8,7 @@ import { GuestRoute } from "@/components/auth/GuestRoute";
 import { RoleEnum } from "@/types";
 import { useAuthStore } from "@/store/authStore";
 import { LoginPage, RegisterPage, DashboardPage, WorkflowListPage, WorkflowFormPage, WorkflowDetailPage, AIWorkflowBuilderPage } from "./pages";
-import { queryClient } from "@/configs/queryClient";
+import { queryClient } from "@/functions/queryClient";
 
 function App() {
   const { isInitialized } = useAuthStore();
