@@ -6,7 +6,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { GuestRoute } from "@/components/auth/GuestRoute";
 import { RoleEnum } from "@/types";
 import { useAuthStore } from "@/store/authStore";
-import { LoginPage, RegisterPage, WorkflowListPage, WorkflowFormPage, WorkflowDetailPage } from "./pages";
+import { LoginPage, RegisterPage, DashboardPage, WorkflowListPage, WorkflowFormPage, WorkflowDetailPage } from "./pages";
 
 function App() {
   const { isInitialized } = useAuthStore();
@@ -64,12 +64,7 @@ function App() {
               allowedRoles={[RoleEnum.ADMIN, RoleEnum.EDITOR, RoleEnum.VIEWER]}
             >
               <AdminLayout>
-                <div className="flex flex-col min-h-screen w-full px-5 justify-center items-center">
-                  <h3 className="font-semibold text-xl">Welcome to FlowForge</h3>
-                  <p className="text-gray-500 mt-2">
-                    Multi-Tenant Workflow Orchestration Engine
-                  </p>
-                </div>
+                <DashboardPage />
               </AdminLayout>
             </ProtectedRoute>
           }

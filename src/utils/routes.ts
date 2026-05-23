@@ -4,6 +4,11 @@ export class ROUTES {
     return `/` as const;
   }
 
+  // Dashboard Routes
+  static get dashboard() {
+    return `/dashboard` as const;
+  }
+
   // Auth Routes
   static get login() {
     return `/auth/login` as const;

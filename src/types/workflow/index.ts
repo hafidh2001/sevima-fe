@@ -150,6 +150,22 @@ export interface WorkflowRunStats {
   avgDuration: number | null;
 }
 
+// Global Run Stats (for dashboard)
+export interface GlobalRunStats {
+  total: number;
+  byStatus: {
+    pending: number;
+    running: number;
+    success: number;
+    failed: number;
+    timedOut: number;
+    cancelled: number;
+  };
+  successRate: number;
+  failureRate: number;
+  averageDurationMs: number;
+}
+
 export interface WorkflowRunQueryParams {
   page?: number;
   limit?: number;

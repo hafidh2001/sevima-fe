@@ -5,6 +5,7 @@ import {
   WorkflowRunQueryParams,
   WorkflowRun,
   WorkflowRunStats,
+  GlobalRunStats,
   TriggerWorkflowPayload,
 } from "@/types/workflow";
 
@@ -101,6 +102,22 @@ export const workflowRunApi = {
       const { data } = await apiClient.get<WorkflowRunStats>(
         `workflows/${workflowId}/runs/stats`
       );
+      return data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data;
+        if (responseData?.message) {
+          throw new Error(responseData.message);
+        }
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  },
+
+  async getGlobalStats(): Promise<GlobalRunStats> {
+    try {
+      const { data } = await apiClient.get<GlobalRunStats>("runs/stats");
       return data;
     } catch (error) {
       if (axios.isAxiosError(error)) {
