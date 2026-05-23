@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/utils/routes";
 import { useAuthStore } from "@/store/authStore";
 import { ConfirmationModal } from "@/components/confirmationModal";
@@ -11,7 +11,8 @@ export const Sidebar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
-  const { logout } = useAuthStore();
+  const location = useLocation();
+  const { user, logout } = useAuthStore();
 
   const handleLogout = async () => {
     await logout();
@@ -23,6 +24,15 @@ export const Sidebar = () => {
   const handleNavClick = () => {
     setIsMobileMenuOpen(false);
   };
+
+  const isWorkflowActive = location.pathname.startsWith("/workflows");
+
+  const navLinkClass = (isActive: boolean) =>
+    `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+      isActive
+        ? "bg-blue-600 text-white"
+        : "text-gray-800 hover:bg-gray-100"
+    }`;
 
   return (
     <>
@@ -52,26 +62,35 @@ export const Sidebar = () => {
         <nav className="flex flex-col gap-1">
           {navItems
             .filter((item) => item.label !== "Logout")
-            .map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to!}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-blue-600 text-white"
-                      : "text-gray-800 hover:bg-gray-100"
-                  }`
-                }
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </NavLink>
-            ))}
+            .map((item) => {
+              const isWorkflow = item.to?.includes("/workflows");
+              const isActive = isWorkflow
+                ? isWorkflowActive
+                : location.pathname === item.to;
+
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to!}
+                  className={() => navLinkClass(isActive)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </NavLink>
+              );
+            })}
         </nav>
 
-        {/* Logout Button - Always at bottom */}
-        <div className="mt-auto pt-4 border-t border-gray-200">
+        {/* User Info & Logout - Always at bottom */}
+        <div className="mt-auto">
+          <div className="border-y border-gray-200 pt-4 pb-2">
+            <div className="px-3 py-2">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {user?.name || "User"}
+              </p>
+              <p className="text-xs text-gray-500 truncate">{user?.email || "-"}</p>
+            </div>
+          </div>
           <button
             onClick={() => setShowLogoutModal(true)}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-800 hover:bg-gray-100 transition-colors w-full"
@@ -96,34 +115,42 @@ export const Sidebar = () => {
             <nav className="flex flex-col gap-1 p-4">
               {navItems
                 .filter((item) => item.label !== "Logout")
-                .map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to!}
-                    onClick={handleNavClick}
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                        isActive
-                          ? "bg-blue-600 text-white"
-                          : "text-gray-800 hover:bg-gray-100"
-                      }`
-                    }
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </NavLink>
-                ))}
+                .map((item) => {
+                  const isWorkflow = item.to?.includes("/workflows");
+                  const isActive = isWorkflow
+                    ? isWorkflowActive
+                    : location.pathname === item.to;
+
+                  return (
+                    <NavLink
+                      key={item.to}
+                      to={item.to!}
+                      onClick={handleNavClick}
+                      className={() => navLinkClass(isActive)}
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </NavLink>
+                  );
+                })}
             </nav>
 
-            {/* Logout Button - Always at bottom */}
-            <div className="mt-auto p-4 border-t border-gray-200">
-              <button
-                onClick={() => setShowLogoutModal(true)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-800 hover:bg-gray-100 transition-colors w-full"
-              >
-                <LogOutIcon size={18} />
-                <span>Logout</span>
-              </button>
+            <div className="mt-auto border-y border-gray-200">
+              <div className="px-4 py-3">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user?.name || "User"}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{user?.email || "-"}</p>
+              </div>
+              <div className="p-4 pt-2">
+                <button
+                  onClick={() => setShowLogoutModal(true)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-800 hover:bg-gray-100 transition-colors w-full"
+                >
+                  <LogOutIcon size={18} />
+                  <span>Logout</span>
+                </button>
+              </div>
             </div>
           </aside>
         </div>
